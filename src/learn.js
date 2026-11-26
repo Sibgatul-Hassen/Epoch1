@@ -5,7 +5,8 @@
 // 4. Splitting time recursively into notes, with a short audible example.
 const NS = "http://www.w3.org/2000/svg";
 const byId = (id) => document.getElementById(id);
-const motion = matchMedia("(prefers-reduced-motion: reduce)");
+// Same on every device (see app.js): the lessons animate identically on phones.
+const motion = { matches: false };
 const timers = new Set();
 const later = (fn, ms) => {
   const t = setTimeout(() => {

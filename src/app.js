@@ -5,7 +5,10 @@ import * as learn from "./learn.js";
 
 const byId = (id) => document.getElementById(id);
 const all = (selector) => [...document.querySelectorAll(selector)];
-const motion = matchMedia("(prefers-reduced-motion: reduce)");
+// The reduced-motion preference is handled in CSS (it removes movement such as the
+// hero ripple and hover lifts). Glows, fades and the tree animation stay the same on
+// every device, so phones with that setting look like the web version.
+const motion = { matches: false };
 const player = new Player();
 let settings = settingsFor(0),
   score = compose(settings);
@@ -497,9 +500,6 @@ byId("pace").onchange = (event) => {
 };
 byId("pace").value = pace;
 document.addEventListener("visibilitychange", resetRotation);
-motion.addEventListener("change", () => {
-  if (studio) drawAt(player.position(), true);
-});
 document.addEventListener("keydown", (event) => {
   if (event.code !== "Space" || event.repeat || !studio || byId("manual").open)
     return;

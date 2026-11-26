@@ -1430,13 +1430,28 @@ input[type="range"]:focus-visible::-webkit-slider-thumb {
     width: 15px;
   }
 }
+/* Reduced motion removes movement (drifting ripples, hover lifts, zooms and smooth
+   scrolling) but keeps glows, fades and colour changes, so the site looks the same on
+   phones that have this setting turned on. */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *:before,
-  *:after {
-    animation-duration: 0.001ms !important;
-    transition-duration: 0.001ms !important;
+  html {
     scroll-behavior: auto !important;
+  }
+  .hero:before,
+  .hero:after {
+    animation: none !important;
+  }
+  .button:hover,
+  .preset-card:hover,
+  .stepper button:hover,
+  .mini-shot:hover,
+  .mini-shot:focus-visible {
+    transform: none !important;
+  }
+  .preset-card:hover img,
+  .mini-shot:hover img,
+  .gallery-stage:hover .slide.shown {
+    transform: none !important;
   }
 }
 
@@ -2098,5 +2113,50 @@ html {
   50% {
     filter: drop-shadow(0 0 8px #f2a5dd73) drop-shadow(0 0 22px #f2a5dd4d)
       drop-shadow(0 0 40px #8be4e726);
+  }
+}
+
+/* ---------- Phones get the same gallery features as the web ---------- */
+.hint-tap {
+  display: none;
+}
+@media (hover: none) {
+  /* No hover on touch screens, so the hint is always visible and says "Tap". */
+  .hint-click {
+    display: none;
+  }
+  .hint-tap {
+    display: inline;
+  }
+  .open-hint {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (max-width: 680px) {
+  .open-card {
+    display: inline-flex;
+  }
+}
+@media (max-width: 560px) {
+  /* Taller stage with the four preview thumbnails as a tappable row along the bottom
+     (the same thumbnails the web shows in its corner). */
+  .gallery-stage {
+    aspect-ratio: 1.22;
+  }
+  .snapshot-pair {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    left: 0.9rem;
+    right: 0.9rem;
+    bottom: 0.9rem;
+  }
+  .mini-shot {
+    width: auto;
+    aspect-ratio: 1.62;
+  }
+  .stage-bottom {
+    bottom: calc(0.9rem + (100vw - 2rem - 1.8rem - 18px) / 4 / 1.62 + 0.7rem);
   }
 }
