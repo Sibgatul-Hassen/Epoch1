@@ -1740,6 +1740,42 @@ The two Codex logs are clean. The exporter edit only half-applied, so I'll fix i
 
 - 🔧 **Bash**: Re-export Claude log with redaction and verify
 
+- 🔧 **Bash**: Show export header line
+
+- 🔧 **Bash**: Remove .nojekyll and document redactions
+
+Nothing in the README refers to `.nojekyll`. Committing, pushing, then waiting for the Pages build to check the live site end to end:
+
+- 🔧 **Bash**: Commit, push, wait for deploy, check assets
+
+- 🔧 **Bash**: Check GitHub Pages build status
+
+- 🔧 **Bash**: Check Pages deploy runs via public API
+
+The Pages build for commit `96d3c46`, the first one without `.nojekyll`, **completed successfully**. Now the full browser test against the live site:
+
+- 🔧 **Bash**: Full functional test on live site
+
+- 🔧 **AskUserQuestion**: {"questions":[{"question":"The current files are clean, but the repo's commit history on GitHub still contains the Whats
+
+- 🔧 **Bash**: Get GitHub user id and check repo state
+
+- 🔧 **Bash**: Back up full history to a bundle
+
+The backup is saved at `D:\Epoch1-history-backup-before-rewrite.bundle`, outside the repo. Before the rewrite there are 65 file versions across history with sensitive matches. Rewriting now:
+
+- 🔧 **Bash**: Rewrite history: redact logs, drop hosting file, noreply email
+
+The rewrite also touched my local copy of the remote branch, so I'll force-push with an explicit check against the original remote commit. Verifying first:
+
+- 🔧 **Bash**: Verify rewritten history
+
+- 🔧 **Bash**: Force-push rewritten history safely
+
+- 🔧 **Bash**: Clean local old history, set noreply email, note rewrite
+
+- 🔧 **Bash**: Re-export log, verify clean, commit and push
+
 ---
 
 _End of export. The session's final hand-off message was written after this file was generated._

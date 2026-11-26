@@ -19,4 +19,4 @@ The transcripts preserve the user prompts and visible assistant responses in ord
 
 ## Redactions
 
-The transcripts are otherwise verbatim. Before publishing, these private details were replaced: a private WhatsApp group invite link from the organizers' email (now `[WhatsApp group invite link removed]`), the names of other email recipients (now `[other participants]`), local file paths on the author's computer (`C:\Users\…` is now `~`), and the author's private email addresses.
+The transcripts are otherwise verbatim. Before publishing, these private details were replaced: a private WhatsApp group invite link from the organizers' email (now `[WhatsApp group invite link removed]`), the names of other email recipients (now `[other participants]`), local file paths on the author's computer (`C:\Users\…` is now `~`), and the author's private email addresses. The git history was rewritten the same way (commits now use the author's GitHub no-reply address), so commit IDs mentioned inside the logs refer to the earlier history.
