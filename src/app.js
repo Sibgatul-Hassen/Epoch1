@@ -1,6 +1,7 @@
 import { clock, compose, presets, sanitize, settingsFor } from "./recursion.js";
 import { drawField, drawScoreStrip, makeField } from "./art.js";
 import { Player } from "./player.js";
+import * as learn from "./learn.js";
 
 const byId = (id) => document.getElementById(id);
 const all = (selector) => [...document.querySelectorAll(selector)];
@@ -16,11 +17,10 @@ let fields = new Map(),
   previousField = null;
 let studio = false,
   playingIntent = false,
-  previewing = false,
   transaction = 0,
   changeTimer;
 let slide = 0,
-  pace = motion.matches ? 0 : 6000,
+  pace = motion.matches ? 0 : 2000,
   moving = pace > 0,
   quoteNumber = 0;
 let galleryTimer,
@@ -220,7 +220,6 @@ function animate(now) {
       motion.matches ? 0 : player.energy().toFixed(3),
     );
   }
-  if (player.active && previewing && player.position() >= 16) stop();
 }
 byId("field-play").onclick = () => byId("play").click();
 function resetButtons() {
@@ -237,20 +236,15 @@ function resetButtons() {
     playingIntent ? "pause" : "play",
     playingIntent ? "Pause" : "Play",
   );
-  labelButton(
-    byId("preview"),
-    previewing ? "stop" : "play",
-    previewing ? "Stop preview" : "Play preview",
-  );
 }
 function stop(rewind = true) {
+  // A render in progress keeps running: if the user resumes with the same settings
+  // it is already done (or nearly). New settings cancel it in prepare().
   ++transaction;
   clearTimeout(changeTimer);
-  player.cancelPending();
   player.silence();
   if (rewind) player.offset = 0;
   playingIntent = false;
-  previewing = false;
   resetButtons();
   stateLabel(rewind ? "Ready" : "Paused");
   byId("studio").style.setProperty("--energy", 0);
@@ -261,29 +255,45 @@ function stop(rewind = true) {
   resetRotation();
 }
 player.onend = () => stop();
-async function begin(preview = false, replacement = false) {
+player.onstall = () => stateLabel("Composing…");
+// Playback starts from the quick 16-second opening render (about 0.3 s, or instant
+// when it was pre-rendered) and swaps seamlessly to the full render once it is ready.
+async function begin(replacement = false) {
   const id = ++transaction;
-  const target = preview ? featuredSettings() : { ...settings };
+  const target = { ...settings };
   const targetScore = compose(target);
+  const fade = replacement ? 1.5 : 0.065;
+  const desired = () =>
+    replacement ? player.position() % targetScore.duration : player.offset;
+  let started = false;
+  const launch = (track) => {
+    player.start(track, desired(), fade);
+    started = true;
+    showScore(targetScore, target);
+    stateLabel("Playing");
+    resetButtons();
+  };
   playingIntent = true;
-  previewing = preview;
   resetButtons();
   resetRotation();
   stateLabel("Composing…");
-  if (preview) labelButton(byId("preview"), "stop", "Composing…");
   try {
     await player.unlock();
     if (id !== transaction) return;
-    const track = await player.prepare(target);
+    const full = await player.prepare(target, (quick) => {
+      if (id !== transaction || started) return;
+      // The opening only helps if playback resumes inside it.
+      if (desired() > quick.pcm.left.length / quick.pcm.sampleRate - 3) return;
+      launch(quick);
+    });
     if (id !== transaction) return;
-    const position = replacement
-      ? player.position() % targetScore.duration
-      : player.offset;
-    player.start(track, position, replacement ? 1.5 : 0.065);
-    if (!preview) showScore(targetScore, target);
-    else labelButton(byId("preview"), "stop", "Stop preview");
-    stateLabel("Playing");
-    resetButtons();
+    if (!started) launch(full);
+    else if (player.active?.track.partial)
+      player.start(full, player.position(), 0.25);
+    else if (!player.active) {
+      player.start(full, player.offset, 0.1);
+      stateLabel("Playing");
+    }
   } catch (error) {
     if (id !== transaction || error.name === "AbortError") return;
     stop();
@@ -296,12 +306,12 @@ function changed(next) {
   score = compose(settings);
   paintControls();
   ++exportVersion;
-  if (playingIntent && !previewing) {
+  if (playingIntent) {
     ++transaction;
     player.cancelPending();
     clearTimeout(changeTimer);
     stateLabel("Composing…");
-    changeTimer = setTimeout(() => begin(false, true), 350);
+    changeTimer = setTimeout(() => begin(true), 250);
   } else {
     player.cancelPending();
     player.offset = 0;
@@ -311,7 +321,6 @@ function changed(next) {
 }
 byId("play").onclick = () => (playingIntent ? stop(false) : begin());
 byId("stop").onclick = () => stop();
-byId("preview").onclick = () => (previewing ? stop() : begin(true));
 byId("loop").onclick = () => {
   const at = player.position();
   player.loop = !player.loop;
@@ -330,7 +339,13 @@ byId("seek").oninput = (event) => {
 byId("seek").onchange = (event) => {
   scrubbing = false;
   const at = +event.target.value;
-  if (player.active) player.start(player.active.track, at);
+  const active = player.active;
+  if (active?.track.partial && at > active.buffer.duration - 0.5) {
+    // Past the quick opening: hold here until the full render takes over.
+    player.silence();
+    player.offset = at;
+    stateLabel("Composing…");
+  } else if (active) player.start(active.track, at);
   else player.offset = at;
   drawAt(at, true);
 };
@@ -400,22 +415,31 @@ function setSlide(index) {
     "--accent",
     presets[galleryViews[slide].mood].color,
   );
+  byId("open-slide").setAttribute(
+    "aria-label",
+    "Open " + galleryViews[slide].name + " in the studio",
+  );
   for (let j = 0; j < 4; j++) {
     const other = (slide + j + 1) % galleryViews.length,
       mini = byId("mini-" + j);
     mini.querySelector("img").src = galleryViews[other].src;
-    mini.setAttribute("aria-label", "Show " + galleryViews[other].name);
-    mini.onclick = () => {
-      if (previewing) stop();
-      setSlide(other);
-      resetRotation();
-    };
+    mini.setAttribute(
+      "aria-label",
+      "Open " + galleryViews[other].name + " in the studio",
+    );
+    mini.onclick = () => openInStudio(other);
   }
 }
+// Each preview opens its own soundscape (mood and depth) in the studio.
+function openInStudio(index) {
+  const view = galleryViews[index];
+  settings = sanitize({ ...settingsFor(view.mood), depth: view.depth });
+  location.hash = "#studio";
+}
+byId("open-slide").onclick = () => openInStudio(slide);
 all("[data-gallery]").forEach(
   (button, i) =>
     (button.onclick = () => {
-      if (previewing) stop();
       setSlide(i);
       resetRotation();
     }),
@@ -440,27 +464,16 @@ byId("next-quote").onclick = () => {
 function resetRotation() {
   clearInterval(galleryTimer);
   clearInterval(quoteTimer);
-  byId("rotate").setAttribute(
-    "aria-label",
-    moving ? "Pause automatic motion" : "Resume automatic motion",
-  );
-  labelButton(byId("rotate"), moving ? "pause" : "play", "");
-  if (!moving || studio || previewing || document.hidden || byId("manual").open)
+  if (!moving || route.current !== "overview" || document.hidden || byId("manual").open)
     return;
   if (!byId("gallery").matches(":hover,:focus-within"))
-    galleryTimer = setInterval(() => setSlide(slide + 1), pace || 6000);
+    galleryTimer = setInterval(() => setSlide(slide + 1), pace || 2000);
   if (!document.querySelector(".quote-area").matches(":hover,:focus-within"))
     quoteTimer = setInterval(
       () => showQuote(quoteNumber + 1),
       Math.max(6000, pace),
     );
 }
-byId("rotate").onclick = () => {
-  moving = !moving;
-  if (moving && !pace) pace = 6000;
-  byId("pace").value = moving ? pace : 0;
-  resetRotation();
-};
 byId("pace").onchange = (event) => {
   pace = +event.target.value;
   moving = pace > 0;
@@ -474,7 +487,7 @@ for (const el of [byId("gallery"), document.querySelector(".quote-area")]) {
 document.addEventListener("visibilitychange", resetRotation);
 motion.addEventListener("change", () => {
   moving = !motion.matches;
-  pace = moving ? 6000 : 0;
+  pace = moving ? 2000 : 0;
   byId("pace").value = pace;
   resetRotation();
   if (studio) drawAt(player.position(), true);
@@ -548,22 +561,20 @@ function route(initial = false) {
   const hash = location.hash.slice(1),
     [dest, preset] = hash.split("/");
   if (dest === "content") return;
-  const nextStudio = dest === "studio";
+  const page =
+    dest === "studio" ? "studio" : dest === "learn" ? "learn" : "overview";
   const apply = () => {
     stop();
-    studio = nextStudio;
-    byId("studio").hidden = !studio;
-    byId("landing").hidden = studio;
+    if (route.current === "learn" && page !== "learn") learn.leave();
+    studio = page === "studio";
+    route.current = page;
+    byId("studio").hidden = page !== "studio";
+    byId("learn").hidden = page !== "learn";
+    byId("landing").hidden = page !== "overview";
+    const navTarget =
+      page === "overview" && dest === "soundscapes" ? "soundscapes" : page;
     all("[data-nav]").forEach((a) => {
-      if (
-        a.dataset.nav ===
-        (studio
-          ? "studio"
-          : dest === "soundscapes"
-            ? "soundscapes"
-            : "overview")
-      )
-        a.setAttribute("aria-current", "page");
+      if (a.dataset.nav === navTarget) a.setAttribute("aria-current", "page");
       else a.removeAttribute("aria-current");
     });
     if (studio) {
@@ -573,13 +584,17 @@ function route(initial = false) {
       showScore(score, settings);
       window.scrollTo(0, 0);
       if (!initial) byId("studio-title").focus({ preventScroll: true });
+    } else if (page === "learn") {
+      window.scrollTo(0, 0);
+      learn.enter();
+      if (!initial) byId("learn-title").focus({ preventScroll: true });
     } else if (dest === "soundscapes") byId("soundscapes").scrollIntoView();
     else window.scrollTo(0, 0);
     resetRotation();
   };
   if (
     !initial &&
-    nextStudio !== studio &&
+    page !== route.current &&
     !motion.matches &&
     document.startViewTransition
   )
@@ -609,8 +624,40 @@ if ("IntersectionObserver" in window && !motion.matches) {
     observer.observe(el);
   });
 }
+// Plain numbers on each soundscape card: how deep the recursion goes, how many
+// notes it places, how fast it moves and how long the piece lasts.
+all("[data-stats]").forEach((list) => {
+  const preset = settingsFor(+list.dataset.stats);
+  const card = compose(preset);
+  const items = [
+    [preset.depth, "levels"],
+    [card.events.length, "notes"],
+    [preset.tempo, "BPM"],
+    [clock(card.duration), "minutes"],
+  ];
+  list.replaceChildren(
+    ...items.map(([value, label]) => {
+      const item = document.createElement("div");
+      const dt = document.createElement("dt");
+      const dd = document.createElement("dd");
+      dd.textContent = value;
+      dt.textContent = label;
+      item.append(dd, dt);
+      return item;
+    }),
+  );
+});
 setSlide(0);
 showQuote(0, false);
 paintControls();
 route(true);
 requestAnimationFrame(animate);
+// Pre-render the openings of every preset and preview so Play starts instantly.
+setTimeout(
+  () =>
+    player.prewarm([
+      ...presets.map((_, i) => settingsFor(i)),
+      ...galleryViews.map((v) => ({ ...settingsFor(v.mood), depth: v.depth })),
+    ]),
+  900,
+);

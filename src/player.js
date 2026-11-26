@@ -1,10 +1,14 @@
-import { clamp } from "./recursion.js";
+import { clamp, sanitize } from "./recursion.js";
 import { waveFile } from "./synth.js";
 export class Player {
   constructor() {
     this.level = 0.6;
     this.loop = false;
     this.offset = 0;
+    this.quick = new Map();
+    this.full = new Map();
+    this.pending = null;
+    this.background = null;
   }
   unlock() {
     if (!this.context) {
@@ -63,42 +67,103 @@ export class Player {
       old.gain.disconnect();
     };
   }
+  static key(settings) {
+    return JSON.stringify(sanitize(settings));
+  }
+  // Keep recently used renders. Openings are small (16 s); full pieces are large,
+  // so only the two most recent full renders are kept.
+  remember(cache, key, track, limit) {
+    cache.delete(key);
+    cache.set(key, track);
+    while (cache.size > limit) cache.delete(cache.keys().next().value);
+  }
   cancelPending() {
     if (!this.pending) return;
     this.pending.worker.terminate();
     this.pending.reject(new DOMException("Superseded", "AbortError"));
     this.pending = null;
   }
-  prepare(settings) {
-    const key = JSON.stringify(settings);
-    if (this.ready?.key === key) return Promise.resolve(this.ready);
-    if (this.pending?.key === key) return this.pending.promise;
-    this.cancelPending();
+  // Start a render worker. Each job posts the quick opening first (unless mode is
+  // "full"), then the full piece (unless mode is "quick").
+  spawn(key, settings, mode) {
     const worker = new Worker(new URL("./audio-worker.js", import.meta.url), {
       type: "module",
     });
-    let rejectPending;
-    const promise = new Promise((resolve, reject) => {
-      rejectPending = reject;
+    const job = { key, worker, listeners: [], quickTrack: null };
+    const finish = () => {
+      worker.terminate();
+      if (this.pending === job) this.pending = null;
+      if (this.background === job) this.background = null;
+    };
+    job.promise = new Promise((resolve, reject) => {
+      job.reject = reject;
       worker.onmessage = ({ data }) => {
-        this.pending = null;
-        worker.terminate();
-        if (data.error) {
+        if (data.kind === "error") {
+          finish();
           reject(new Error(data.error));
           return;
         }
-        this.ready = { key, pcm: data, buffer: null, looped: false };
-        resolve(this.ready);
+        const track = {
+          key,
+          pcm: data,
+          buffer: null,
+          looped: false,
+          partial: data.kind === "quick",
+        };
+        if (track.partial) {
+          this.remember(this.quick, key, track, 8);
+          job.quickTrack = track;
+          for (const listener of job.listeners.splice(0)) listener(track);
+          if (mode === "quick") {
+            finish();
+            resolve(track);
+          }
+          return;
+        }
+        this.remember(this.full, key, track, 2);
+        finish();
+        resolve(track);
       };
       worker.onerror = (event) => {
-        this.pending = null;
-        worker.terminate();
-        reject(new Error(event.message));
+        finish();
+        reject(new Error(event.message || "Rendering failed"));
       };
     });
-    this.pending = { key, promise, worker, reject: rejectPending };
-    worker.postMessage(settings);
-    return promise;
+    worker.postMessage({ settings, mode });
+    return job;
+  }
+  // Resolves with the full render. onQuick(track) is called as soon as an opening
+  // render is available (immediately if it is cached), so playback can begin at once.
+  prepare(settings, onQuick = null) {
+    const key = Player.key(settings);
+    const full = this.full.get(key);
+    if (full) return Promise.resolve(full);
+    if (this.pending?.key === key) {
+      if (onQuick) {
+        const ready = this.pending.quickTrack || this.quick.get(key);
+        if (ready) queueMicrotask(() => onQuick(ready));
+        else this.pending.listeners.push(onQuick);
+      }
+      return this.pending.promise;
+    }
+    this.cancelPending();
+    const quick = this.quick.get(key);
+    if (quick && onQuick) queueMicrotask(() => onQuick(quick));
+    const job = this.spawn(key, settings, quick ? "full" : "both");
+    if (onQuick && !quick) job.listeners.push(onQuick);
+    this.pending = job;
+    return job.promise;
+  }
+  // Render the openings of likely choices in the background, one at a time, so
+  // pressing Play on them starts instantly.
+  async prewarm(list) {
+    for (const settings of list) {
+      const key = Player.key(settings);
+      if (this.quick.has(key) || this.full.has(key)) continue;
+      const job = this.spawn(key, settings, "quick");
+      this.background = job;
+      await job.promise.catch(() => {});
+    }
   }
   start(track, offset = 0, fade = 0.055) {
     const ctx = this.context;
@@ -111,7 +176,7 @@ export class Player {
       track.buffer.copyToChannel(track.pcm.left, 0);
       track.buffer.copyToChannel(track.pcm.right, 1);
     }
-    if (track.looped !== this.loop) {
+    if (!track.partial && track.looped !== this.loop) {
       const count = track.pcm.sampleRate,
         end = track.buffer.length - count;
       for (const [ch, raw] of [track.pcm.left, track.pcm.right].entries()) {
@@ -130,7 +195,7 @@ export class Player {
       gain = ctx.createGain(),
       now = ctx.currentTime;
     source.buffer = track.buffer;
-    source.loop = this.loop;
+    source.loop = this.loop && !track.partial;
     source.loopStart = 1;
     source.loopEnd = track.buffer.duration;
     source.connect(gain);
@@ -149,8 +214,14 @@ export class Player {
     source.onended = () => {
       if (this.active?.source === source) {
         this.active = null;
-        this.offset = 0;
-        this.onend?.();
+        if (track.partial) {
+          // The opening ran out before the full render arrived: hold the place.
+          this.offset = track.buffer.duration;
+          this.onstall?.();
+        } else {
+          this.offset = 0;
+          this.onend?.();
+        }
       }
       source.disconnect();
       gain.disconnect();

@@ -106,6 +106,7 @@
         <nav aria-label="Main navigation">
           <a href="#overview" data-nav="overview">Overview</a
           ><a href="#soundscapes" data-nav="soundscapes">Soundscapes</a
+          ><a href="#learn" data-nav="learn">Recursion</a
           ><a href="#studio" data-nav="studio">Studio</a>
         </nav>
         <button class="guide-link" data-help>
@@ -131,10 +132,10 @@
                 ><svg class="icon" aria-hidden="true">
                   <use href="#i-sliders" /></svg
                 >Open studio</a
-              ><button class="button secondary" id="preview">
-                <svg class="icon" aria-hidden="true"><use href="#i-play" /></svg
-                ><span>Play preview</span>
-              </button>
+              ><a href="#learn" class="button secondary"
+                ><svg class="icon" aria-hidden="true"><use href="#i-spark" /></svg
+                >What is recursion?</a
+              >
             </div>
             <p class="listen-note">
               <svg class="icon" aria-hidden="true">
@@ -185,18 +186,11 @@
                 width="1000"
                 height="570"
               />
+              <button class="open-slide" id="open-slide" type="button"></button>
               <div class="stage-top">
                 <span class="glass-label"
                   ><b class="lamp"></b>FIELD PREVIEW</span
-                ><button
-                  class="glass-icon"
-                  id="rotate"
-                  aria-label="Pause automatic motion"
-                >
-                  <svg class="icon" aria-hidden="true">
-                    <use href="#i-pause" />
-                  </svg>
-                </button>
+                ><span class="glass-label open-hint">Click to open</span>
               </div>
               <div class="stage-bottom">
                 <span class="mono">FEATURED SOUNDSCAPE</span
@@ -277,6 +271,7 @@
           <div class="cards">
             <a class="preset-card theme-0" href="#studio/0" data-preset="0"
               ><div class="card-art">
+                <span class="card-number" aria-hidden="true">01</span>
                 <img
                   src="assets/scene-0.webp"
                   alt="Cyan branching tide tree"
@@ -291,9 +286,11 @@
                 <span class="card-mood"><i></i>TIDAL</span>
                 <h3>Tidal Fold</h3>
                 <p>Felt keys · Ocean tide</p>
+                <dl class="card-stats" data-stats="0"></dl>
               </div></a
             ><a class="preset-card theme-1" href="#studio/1" data-preset="1"
               ><div class="card-art">
+                <span class="card-number" aria-hidden="true">02</span>
                 <img
                   src="assets/scene-1.webp"
                   alt="Pink branching orchid tree"
@@ -308,9 +305,11 @@
                 <span class="card-mood"><i></i>ORBITAL</span>
                 <h3>Orchid Orbit</h3>
                 <p>Glass bells · Soft wind</p>
+                <dl class="card-stats" data-stats="1"></dl>
               </div></a
             ><a class="preset-card theme-2" href="#studio/2" data-preset="2"
               ><div class="card-art">
+                <span class="card-number" aria-hidden="true">03</span>
                 <img
                   src="assets/scene-2.webp"
                   alt="Orange branching bloom tree"
@@ -325,6 +324,7 @@
                 <span class="card-mood"><i></i>BLOOM</span>
                 <h3>Amber Bloom</h3>
                 <p>Warm plucks · Fine rain</p>
+                <dl class="card-stats" data-stats="2"></dl>
               </div></a
             >
           </div>
@@ -568,6 +568,96 @@
           </aside>
         </div>
       </section>
+      <section id="learn" class="shell learn" aria-labelledby="learn-title" hidden>
+        <div class="learn-hero">
+          <p class="eyebrow"><span class="rule"></span>RECURSION IN ONE MINUTE</p>
+          <h1 id="learn-title" tabindex="-1">A shape made of <em>itself.</em></h1>
+          <p class="intro">
+            Recursion solves a big problem by handing a smaller copy of the same
+            problem to itself, until the copy is small enough to stop.
+          </p>
+        </div>
+
+        <article class="lesson" aria-labelledby="lesson-grow">
+          <div class="lesson-visual">
+            <svg id="grow-tree" viewBox="0 0 400 290" role="img" aria-label="A tree drawn by a recursive function"></svg>
+          </div>
+          <div class="lesson-text">
+            <span class="step">1</span>
+            <h2 id="lesson-grow">One rule, repeated</h2>
+            <p>Each branch grows two smaller branches. That's the whole program.</p>
+            <div class="stepper" role="group" aria-label="Recursion depth" id="grow-steps"></div>
+            <p class="big-number"><b id="grow-calls">1</b> calls of the same function</p>
+          </div>
+        </article>
+
+        <article class="lesson lesson-rules" aria-labelledby="lesson-rules">
+          <div class="lesson-text">
+            <span class="step">2</span>
+            <h2 id="lesson-rules">Two rules make it work</h2>
+          </div>
+          <div class="rule-cards">
+            <div class="rule-card">
+              <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="17" /><path d="M16 24h16" /></svg>
+              <h3>Base case</h3>
+              <p>Know when to stop.</p>
+              <code><span class="k">if</span> (depth === 0) <span class="k">return</span>;</code>
+            </div>
+            <div class="rule-card">
+              <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 40V22M24 22 13 11M24 22l11-11" /><circle cx="13" cy="11" r="3" /><circle cx="35" cy="11" r="3" /></svg>
+              <h3>Recursive step</h3>
+              <p>Call yourself on a smaller piece.</p>
+              <code>grow(left, depth <span class="k">-</span> 1);<br />grow(right, depth <span class="k">-</span> 1);</code>
+            </div>
+          </div>
+        </article>
+
+        <article class="lesson flip" aria-labelledby="lesson-stack">
+          <div class="lesson-visual stack-visual">
+            <svg id="stack-tree" viewBox="0 0 360 200" role="img" aria-label="Call tree, highlighting the active call"></svg>
+            <div class="stack-box">
+              <span class="mono">CALL STACK</span>
+              <ol id="stack-frames" class="stack-frames"></ol>
+            </div>
+          </div>
+          <div class="lesson-text">
+            <span class="step">3</span>
+            <h2 id="lesson-stack">Watch the calls</h2>
+            <p>A call waits on the stack until both of its children finish.</p>
+            <div class="lesson-actions">
+              <button class="button primary" id="stack-play"><svg class="icon" aria-hidden="true"><use href="#i-play" /></svg><span>Run it</span></button>
+              <button class="button secondary" id="stack-next"><svg class="icon" aria-hidden="true"><use href="#i-next" /></svg><span>One step</span></button>
+            </div>
+            <p class="stack-status mono" id="stack-status" aria-live="polite">Press Run</p>
+          </div>
+        </article>
+
+        <article class="lesson" aria-labelledby="lesson-split">
+          <div class="lesson-visual">
+            <svg id="split-svg" viewBox="0 0 600 250" role="img" aria-label="Time split recursively into notes"></svg>
+          </div>
+          <div class="lesson-text">
+            <span class="step">4</span>
+            <h2 id="lesson-split">Split time, place notes</h2>
+            <p>Overtone splits a stretch of time. Every split becomes a note.</p>
+            <div class="stepper" role="group" aria-label="Depth of the time split" id="split-steps"></div>
+            <div class="lesson-actions">
+              <button class="button primary" id="split-play"><svg class="icon" aria-hidden="true"><use href="#i-play" /></svg><span>Hear it</span></button>
+            </div>
+          </div>
+        </article>
+
+        <ul class="mapping" aria-label="How recursion becomes music">
+          <li><b>Split point</b><span>→</span>when the note plays</li>
+          <li><b>Depth</b><span>→</span>higher, softer notes</li>
+          <li><b>Left or right</b><span>→</span>stereo position</li>
+          <li><b>Last branch</b><span>→</span>a small chime</li>
+        </ul>
+
+        <div class="learn-cta">
+          <a href="#studio" class="button primary"><svg class="icon" aria-hidden="true"><use href="#i-sliders" /></svg>Hear it grow in the studio</a>
+        </div>
+      </section>
     </main>
     <footer>
       <div class="shell footer-inner">
@@ -597,9 +687,9 @@
         <h2 id="manual-title">User <em>manual.</em></h2>
         <h3>Listen for the first time</h3>
         <p>
-          Choose Play preview to audition the featured soundscape. Open studio
-          or select a preset card to shape a full composition. Sound starts when
-          you press Play.
+          Click any preview picture or soundscape card to open it in the studio,
+          then press Play. Sound starts almost instantly. New to recursion? Open
+          the Recursion page for a one-minute visual introduction.
         </p>
         <h3>Follow the tree</h3>
         <p>
@@ -628,13 +718,14 @@
           Press Space in the studio to play or pause when focus is outside a
           control. Use Tab and Shift+Tab to move, Enter or Space to activate
           buttons, and arrow keys to adjust sliders. Escape closes this guide.
-          Automatic motion pauses when you hover or focus the gallery. Your
-          device’s reduced-motion preference starts it paused.
+          The gallery changes every 2 seconds and pauses while you hover or
+          focus it. Your device’s reduced-motion preference keeps it still, and
+          you can change the pace below.
         </p>
-        <label class="pace-label" for="pace">Gallery and quote motion</label
+        <label class="pace-label" for="pace">Gallery motion</label
         ><select id="pace">
+          <option value="2000">Every 2 seconds</option>
           <option value="6000">Calm · every 6 seconds</option>
-          <option value="2000">Quick gallery · every 2 seconds</option>
           <option value="0">Still · manual changes only</option>
         </select>
       </div>

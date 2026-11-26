@@ -1,6 +1,6 @@
 # Overtone · Recursive Soundscapes
 
-[Play in the live studio](https://sibgatul-hassen.github.io/Epoch1/#studio) · [Open the landing page](https://sibgatul-hassen.github.io/Epoch1/)
+[Play in the live studio](https://sibgatul-hassen.github.io/Epoch1/#studio) · [Open the landing page](https://sibgatul-hassen.github.io/Epoch1/) · [Learn recursion visually](https://sibgatul-hassen.github.io/Epoch1/#learn)
 
 Overtone is Sibgatul Hassen’s entry for UIU Developers Hub’s Hub’s Quest, Epoch 1. A seeded recursive tree becomes a relaxing stereo composition. Each sounding branch lights its ancestry as it plays. Start with Tidal Fold, Orchid Orbit or Amber Bloom, change a parameter, and save the full piece as a WAV.
 
@@ -8,10 +8,11 @@ Overtone is Sibgatul Hassen’s entry for UIU Developers Hub’s Hub’s Quest, 
 
 ## Try it
 
-1. Choose a mood and press Play. Sound begins on a user gesture.
-2. Raise Depth, listen for finer answering notes, and follow the glowing path back to the trunk.
-3. Pause holds your place. Stop rewinds. Loop crossfades the ending into the beginning.
-4. Export WAV saves the full mastered composition as 44.1 kHz, stereo, 16-bit PCM. The listening volume is independent of the export level.
+1. New to recursion? Open the **Recursion** page: a tree that grows level by level, the two rules (base case and recursive step), an animated call stack, and an interactive "split time into notes" example you can hear.
+2. Click any preview or soundscape card (each card shows its levels, notes, BPM and length) and press Play. Sound starts in about 0.2 s.
+3. Raise Depth, listen for finer answering notes, and follow the glowing path back to the trunk.
+4. Pause holds your place. Stop rewinds. Loop crossfades the ending into the beginning.
+5. Export WAV saves the full mastered composition as 44.1 kHz, stereo, 16-bit PCM. The listening volume is independent of the export level.
 
 ## How the recursion works
 
@@ -27,7 +28,7 @@ Overtone is Sibgatul Hassen’s entry for UIU Developers Hub’s Hub’s Quest, 
 | Position and ancestry | Split position controls stereo pan, and terminal notes add a light chime | The active node and its ancestors glow together |
 | Space and ambience | Damped reflections with procedural tide, wind or rain | The level halo follows the sound |
 
-The [worker](src/audio-worker.js) renders the score through [the synthesizer](src/synth.js). The same stereo samples feed playback and WAV encoding. Six comb filters and two allpasses per channel create the reverb. The master aims for −20 dBFS RMS with a −3 dBFS peak ceiling. The [field renderer](src/art.js) caches each phrase and adds timed highlights over it.
+The [worker](src/audio-worker.js) renders the score through [the synthesizer](src/synth.js). For an instant start it first renders only the 16-second opening (about 0.3 s), then the full piece. Both use the same loudness gain, so they are sample-identical where they overlap, and playback swaps to the full render without a seam. Preset and preview openings are pre-rendered in the background, so they start immediately. The same stereo samples feed playback and WAV encoding. Six comb filters and two allpasses per channel create the reverb. The master aims for −20 dBFS RMS with a −3 dBFS peak ceiling. The [field renderer](src/art.js) caches each phrase and adds timed highlights over it.
 
 ## Run locally
 

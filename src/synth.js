@@ -134,48 +134,59 @@ function reverberate(channel, wet, stereoOffset) {
     channel[i] = dry * (1 - wet * 0.28) + diffuse * wet;
   }
 }
-function master(channels) {
-  let peak = 0,
-    energy = 0;
+// Loudness gain that brings the mix to the RMS target. It is always measured over the
+// same opening window, so a quick render of the opening and the full render use the
+// same gain and are sample-identical where they overlap. Playback can therefore start
+// from the quick render and swap to the full one seamlessly.
+export const quickSeconds = 16;
+function loudnessGain(channels) {
+  let energy = 0;
+  const window = Math.min(channels.left.length, quickSeconds * sampleRate);
+  for (let i = 0; i < window; i++)
+    energy += channels.left[i] ** 2 + channels.right[i] ** 2;
+  const rms = Math.sqrt(energy / (2 * window));
+  return rms > 0 ? clamp(rmsTarget / rms, 0.05, 40) : 1;
+}
+// Apply the gain, then a gentle look-ahead peak limiter (−3 dBFS ceiling) and fades.
+// Every step is causal apart from the 5 ms look-ahead, so a shorter render matches
+// the start of a longer one exactly (except its own fade-out at the very end).
+function master(channels, gain) {
   const lookAhead = Math.round(0.005 * sampleRate);
   const release = Math.exp(-1 / (0.08 * sampleRate));
+  const { left, right } = channels;
   let attenuation = 1;
-  for (let i = 0; i < channels.left.length; i++) {
-    const amplitude = Math.max(
-      Math.abs(channels.left[i]),
-      Math.abs(channels.right[i]),
-    );
-    const ahead = Math.min(channels.left.length - 1, i + lookAhead);
-    const forecast = Math.max(
-      amplitude,
-      Math.abs(channels.left[ahead]),
-      Math.abs(channels.right[ahead]),
-    );
-    const target = forecast > 0.82 ? 0.82 / forecast : 1;
+  for (let i = 0; i < left.length; i++) {
+    const ahead = Math.min(left.length - 1, i + lookAhead);
+    const forecast =
+      gain *
+      Math.max(
+        Math.abs(left[i]),
+        Math.abs(right[i]),
+        Math.abs(left[ahead]),
+        Math.abs(right[ahead]),
+      );
+    const target = forecast > peakTarget ? peakTarget / forecast : 1;
     attenuation +=
       (target - attenuation) * (target < attenuation ? 0.0113 : 1 - release);
     const fade = Math.min(
       1,
       i / (0.35 * sampleRate),
-      (channels.left.length - 1 - i) / (0.8 * sampleRate),
+      (left.length - 1 - i) / (0.8 * sampleRate),
     );
-    channels.left[i] *= attenuation * fade;
-    channels.right[i] *= attenuation * fade;
-    peak = Math.max(peak, amplitude * attenuation * fade);
-    energy += channels.left[i] ** 2 + channels.right[i] ** 2;
-  }
-  const rms = Math.sqrt(energy / (2 * channels.left.length));
-  const normalization =
-    rms > 0 ? Math.min(rmsTarget / rms, peakTarget / peak) : 1;
-  for (let i = 0; i < channels.left.length; i++) {
-    channels.left[i] *= normalization;
-    channels.right[i] *= normalization;
+    // min() is a hard ceiling in case the smoothed attack has not caught up yet.
+    const scale = gain * Math.min(attenuation, target) * fade;
+    left[i] *= scale;
+    right[i] *= scale;
   }
 }
-export function render(input) {
+// options.seconds renders only the opening of the piece (for an instant start).
+export function render(input, options = {}) {
   const settings = sanitize(input);
   const score = compose(settings);
-  const length = Math.ceil(score.duration * sampleRate);
+  const fullLength = Math.ceil(score.duration * sampleRate);
+  const length = options.seconds
+    ? Math.min(fullLength, Math.ceil(options.seconds * sampleRate))
+    : fullLength;
   const channels = {
     left: new Float32Array(length),
     right: new Float32Array(length),
@@ -212,7 +223,10 @@ export function render(input) {
   const wet = clamp(settings.space / 100, 0, 1);
   reverberate(channels.left, wet, 0);
   reverberate(channels.right, wet, 23);
-  master(channels);
+  const gain = loudnessGain(channels);
+  master(channels, gain);
+  channels.gain = gain;
+  channels.complete = length === fullLength;
   return channels;
 }
 export function waveFile({ left, right, sampleRate }, volume = 1) {
