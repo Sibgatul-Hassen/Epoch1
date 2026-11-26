@@ -279,13 +279,19 @@ player.onend = () => stop();
 player.onstall = () => stateLabel("Composing…");
 // Playback starts from the quick 16-second opening render (about 0.3 s, or instant
 // when it was pre-rendered) and swaps seamlessly to the full render once it is ready.
-async function begin(replacement = false) {
+// restart: a new piece (another mood or seed) starts from its beginning, so its
+// pre-rendered opening plays at once instead of waiting for a full render.
+async function begin(replacement = false, restart = false) {
   const id = ++transaction;
   const target = { ...settings };
   const targetScore = compose(target);
   const fade = replacement ? 1.5 : 0.065;
   const desired = () =>
-    replacement ? player.position() % targetScore.duration : player.offset;
+    restart
+      ? 0
+      : replacement
+        ? player.position() % targetScore.duration
+        : player.offset;
   let started = false;
   const launch = (track) => {
     player.start(track, desired(), fade);
@@ -322,7 +328,7 @@ async function begin(replacement = false) {
     notify("Audio could not start. Press Play to try again.");
   }
 }
-function changed(next) {
+function changed(next, restart = false) {
   settings = sanitize(next);
   score = compose(settings);
   paintControls();
@@ -332,7 +338,8 @@ function changed(next) {
     player.cancelPending();
     clearTimeout(changeTimer);
     stateLabel("Composing…");
-    changeTimer = setTimeout(() => begin(true), 250);
+    // Slider tweaks wait briefly for the drag to settle; a new piece starts at once.
+    changeTimer = setTimeout(() => begin(true, restart), restart ? 0 : 250);
   } else {
     player.cancelPending();
     player.offset = 0;
@@ -377,14 +384,14 @@ for (const key of ["depth", "spread", "tempo", "space", "ambience"]) {
 byId("pulse").onchange = (event) =>
   changed({ ...settings, pulse: event.target.checked });
 byId("seed").onchange = (event) =>
-  changed({ ...settings, seed: event.target.value });
+  changed({ ...settings, seed: event.target.value }, true);
 byId("shuffle").onclick = () =>
   changed({
     ...settings,
     seed: crypto.getRandomValues(new Uint32Array(1))[0] % 100000,
-  });
+  }, true);
 all("[data-mood]").forEach(
-  (button, index) => (button.onclick = () => changed(settingsFor(index))),
+  (button, index) => (button.onclick = () => changed(settingsFor(index), true)),
 );
 byId("download").onclick = async () => {
   const button = byId("download");
