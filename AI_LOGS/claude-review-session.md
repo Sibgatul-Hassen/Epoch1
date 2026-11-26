@@ -1776,6 +1776,16 @@ The rewrite also touched my local copy of the remote branch, so I'll force-push 
 
 - 🔧 **Bash**: Re-export log, verify clean, commit and push
 
+The log now contains my own partly-masked mention of your university address (`[private email removed] from my explanation above. I'll check for it and redact it fully:
+
+- 🔧 **Bash**: Find partial email mentions
+
+It's not in the file. That message may not have been written to the transcript when I exported. To be safe on future re-exports, I'll add a broader rule that catches any form of that address:
+
+- 🔧 **Edit**: ~\AppData\Local\Temp\claude\bed141e408e17ecd\42fba2b1-2320-451a-8dc5-4313e3359b9d\scratchpad\redact.mjs
+
+- 🔧 **Bash**: Re-export, verify, wait for Pages deploy
+
 ---
 
 _End of export. The session's final hand-off message was written after this file was generated._
