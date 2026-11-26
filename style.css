@@ -1010,9 +1010,15 @@ dialog.leaving::backdrop {
   padding: 0.65rem 1rem;
   border: 1px solid #405b62;
 }
+/* Logo "breathing": a slow glow that swells and fades on a 7 s cycle. */
 @keyframes breathe {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 2px #8be4e733) brightness(1);
+  }
   50% {
-    filter: drop-shadow(0 0 4px #85cbe23b);
+    filter: drop-shadow(0 0 7px #8be4e7b3) drop-shadow(0 0 14px #f2a5dd59)
+      brightness(1.18);
   }
 }
 @keyframes appear {
