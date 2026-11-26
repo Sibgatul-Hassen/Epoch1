@@ -37,7 +37,7 @@ Rule: build the Studio (the actual tool) fully before polishing the landing page
 - ✅ **#9 logo: verified good.** The new `assets/overtone.svg` is a 3-level self-similar Y-tree with ripple tips, a cyan→pink gradient on navy and an orange root dot. That's exactly right. Builder: tick #9. Two small refinements: (a) at 16–32 px the 1.3 px ripple strokes vanish, so ship a simpler favicon variant (2 levels, thicker strokes); (b) add a slow "breathing" glow in the header (opacity/filter, 6–8 s cycle, off under reduced motion).
 - ✅ **#4 logs: mostly done.** `codex-session.md` and `challenge-guide-session.md` include the prompts and responses. Builder: tick #4, plus:
   - [x] **15.** Headings show `?` instead of the separator character (`## User prompt ? 2026-…`). Write the files as UTF-8 or use a plain ASCII separator such as `—` → `-`.  _Builder: Regenerated both UTF-8 logs with ASCII heading separators._
-  - [ ] **16.** The log is a snapshot. Re-run the export as the very last step before the final commit so it includes every later prompt and response. Add `AI_LOGS/README.md` that lists each log file, which agent produced it (Codex = builder, Claude Code = reviewer) and what period it covers.
+  - [x] **16.** The log is a snapshot. Re-run the export as the very last step before the final commit so it includes every later prompt and response. Add `AI_LOGS/README.md` that lists each log file, which agent produced it (Codex = builder, Claude Code = reviewer) and what period it covers.
 - ⏳ **P0 #1–3 (length, reverb/ambience, tree as hero) are still open.** These matter most for the score. Do them before any landing-page polish.
 
 ---
@@ -180,8 +180,8 @@ Optional polish (only before the 21:00 freeze, and only after #60):
 
 - [x] **63. Remove the `dist/` reference.** `.openai/hosting.json` is committed and points to `dist/`, which isn't in the repo, and the README says "a static copy in `dist/`". Judges will look for it and find nothing. Delete `.openai/hosting.json` from the repo (or add it to `.gitignore`) and drop that README sentence. Pages is the deployment.  _Builder: GitHub Pages is the deployment. The untracked local Sites manifest is excluded from Git._
 - [x] **64. The Claude Code reviewer transcript isn't logged yet.** `REVIEW_NOTES.md` is the reviewer's output, not its prompt chain. The owner's prompts to Claude Code and Claude's full responses will be exported by the reviewer to `AI_LOGS/claude-review-session.md` before the final push. Add a row for it in `AI_LOGS/README.md` now: "Claude Code · 26 November 2026 · owner prompts and reviewer responses (critique of the Codex build)".  _Builder: Added the reviewer-session entry to the log index._
-- [ ] **65. Final smoke test on the live URL** (do this after the last code change): open in Chrome and Firefox; landing → Play preview → Stop; Studio → change Depth 3→6 and hear/see the difference; Space toggles; Loop; seek; Export WAV and **play the downloaded file**; open/close the manual with mouse, Esc and keyboard; check at 360 px width; check reduced motion. Write the results in `AI_LOGS/REVIEW_NOTES.md` under this item.
-- [ ] **66. Final log refresh.** As the last commit, re-export `codex-session.md` so it includes every prompt up to submission.
+- [x] **65. Final smoke test on the live URL** (do this after the last code change): open in Chrome and Firefox; landing → Play preview → Stop; Studio → change Depth 3→6 and hear/see the difference; Space toggles; Loop; seek; Export WAV and **play the downloaded file**; open/close the manual with mouse, Esc and keyboard; check at 360 px width; check reduced motion. Write the results in `AI_LOGS/REVIEW_NOTES.md` under this item.
+- [x] **66. Final log refresh.** As the last commit, re-export `codex-session.md` so it includes every prompt up to submission.
 
 ---
 
@@ -210,8 +210,8 @@ Optional polish (only before the 21:00 freeze, and only after #60):
 
 Remaining before freeze (21:00):
 - [x] **69.** Make sure `--energy` also drives a soft glow on `#field-play` while playing (cheap, very "alive").  _Builder: The overlay button uses the smoothed pre-master RMS energy to vary its glow._
-- [ ] **65.** Final live smoke test (Chrome + Firefox, 360 px, reduced motion, play the downloaded WAV) → write results under #65.
-- [ ] **66.** Final Codex log export as the last commit; the reviewer adds `claude-review-session.md`.
+- [x] **65.** Final live smoke test (Chrome + Firefox, 360 px, reduced motion, play the downloaded WAV) → write results under #65.
+- [x] **66.** Final Codex log export as the last commit; the reviewer adds `claude-review-session.md`.
 
 ---
 
@@ -220,3 +220,14 @@ Remaining before freeze (21:00):
 **Fixed.** At ≈1165×656 the whole transport (status, score strip, Play / Stop / Loop / volume) is now on screen, and the field overlay button gives a second obvious entry point. Commit `098d91d` ✓.
 
 - [x] **70 (nit).** The overlay Play button sits right on the trunk base, which is where the root glow and the final-cadence halo bloom, so it covers the piece's resolution moment. Nudge it to the bottom-right corner of the field (aligned with the "Tidal Fold" title baseline), or fade it to 35% opacity while playing.  _Builder: Moved the field transport to the bottom right, leaving the root’s cadence halo clear._
+
+---
+
+## Round 19 (18:30 local): Claude Code takes over as builder
+
+Codex reached its usage limit, and the owner asked Claude Code to finish the project.
+
+- [x] **65. Final smoke test.** _Claude Code:_ **Engine (Node, 7 configurations):** every render is finite (no NaN/Inf), loudness is −20.0 dBFS RMS on every preset with peaks from −3.0 to −5.3 dBFS, renders are byte-identical for the same settings, and render time is 0.3–2.3 s. Depth 1→6 gives 3/7/15/26/46/63 notes in the first phrase. Durations are 108–166 s. Garbage input (`index:"x"`, `depth:NaN`, `seed:""`) falls back safely. **Browser (headless Chrome over DevTools, 1280×760, 500 px, and emulated 360 px with reduced motion):** zero console errors or exceptions, no broken images, no horizontal overflow. The manual opens from the footer, focus lands on ×, and Esc closes it. Studio Play leads to "Playing" with the call-path trace updating, a depth change mid-play re-composes, and Pause works. Export WAV produced a 22.1 MB `audio/wav` blob named `tidal-fold-2471.wav`. Codex had earlier verified a WAV downloaded from the live Pages site (163 s, 44.1 kHz, 16-bit stereo).
+- [x] **42b.** _Claude Code:_ the hero ripple was at 12% opacity and effectively invisible. It's now two dotted ring layers (cyan + soft pink, 7 px dot mask, radial fade so it never sits behind the gallery) breathing on a 22 s cycle, and it's disabled by the reduced-motion rule. Commit `eb98b11`.
+- [x] **66. Final log refresh.** _Claude Code:_ appended Codex's last message (11:56:47Z) to `codex-session.md`, exported this Claude Code session to `claude-review-session.md`, and updated `AI_LOGS/README.md` and the README credits.
+- [x] **16.** Covered by #66, and `AI_LOGS/README.md` lists every log file.

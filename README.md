@@ -43,4 +43,4 @@ Project and copyright © 2026 Sibgatul Hassen. The logo, tree captures and gener
 
 The landing quotes are excerpts from Ada Lovelace’s Note A and Benoît Mandelbrot on the geometry of nature. [Lovelace’s notes](https://www.fourmilab.ch/babbage/sketch.html) · [Mandelbrot interview](https://users.math.yale.edu/mandelbrot/web_pdfs/inHisOwnWords.pdf)
 
-Codex assisted with implementation and Claude Code provided review feedback. [AI prompt-and-response logs and review notes](AI_LOGS/README.md)
+Codex assisted with implementation. Claude Code reviewed the build, then handled final testing, polish and the log export after Codex reached its usage limit. [AI prompt-and-response logs and review notes](AI_LOGS/README.md)
