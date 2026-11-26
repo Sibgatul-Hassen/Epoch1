@@ -215,3 +215,7 @@ The first engine checks passed. Across the tested settings, pieces lasted 74–1
 ## Assistant response - 2026-11-26T11:45:37.038Z
 
 The studio now plays and exports the same generated score. At the Tidal Fold preset, raising depth from 3 to 6 produces 15, 26, 46, then 63 sounding nodes in the first phrase. I’ve captured the three gallery images from the renderer and am checking the full interaction in Chrome, including mobile layout, keyboard navigation, and downloaded audio.
+
+## Assistant response - 2026-11-26T11:56:46.229Z
+
+GitHub Pages is live. Chrome completed a download from the public site, and I verified the file contains 163 seconds of 44.1 kHz, 16-bit stereo audio. The gallery now includes a shallow tree, a deep tree, a branch close-up, and a capture of the studio controls. I’m checking the final version in Firefox as well.

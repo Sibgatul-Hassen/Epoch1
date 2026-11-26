@@ -1,27 +1,652 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0c111b"><meta name="description" content="Explore the shape of sound. Grow a recursive tree, listen to its music, and save your own relaxing soundscape."><title>Overtone — Recursive Soundscapes</title><link rel="icon" type="image/svg+xml" href="assets/favicon.svg"><link rel="preload" as="font" type="font/woff2" crossorigin href="assets/dm-sans.woff2"><link rel="stylesheet" href="style.css"><script type="module" src="src/app.js"></script></head>
-<body><svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z" fill="currentColor" stroke="none"/></symbol><symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14m8-14v14" stroke-width="3.5"/></symbol><symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none"/></symbol><symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h5m4 0h7M4 17h9m4 0h3"/><circle cx="11" cy="7" r="2"/><circle cx="15" cy="17" r="2"/></symbol><symbol id="i-wave" viewBox="0 0 24 24"><path d="M2 13h2l2-7 3 13 3-16 3 17 3-12 2 5h2"/></symbol><symbol id="i-headphones" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="12" width="4" height="7" rx="2"/><rect x="17" y="12" width="4" height="7" rx="2"/></symbol><symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 4.5 1.6c-1.2 1.1-2.1 1.3-2.1 3"/><circle cx="12" cy="16.6" r=".7" fill="currentColor"/></symbol><symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol><symbol id="i-loop" viewBox="0 0 24 24"><path d="m16 3 4 4-4 4M4 11V9a2 2 0 0 1 2-2h13M8 21l-4-4 4-4m12 0v2a2 2 0 0 1-2 2H5"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></symbol><symbol id="i-dice" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 8h.1M16 8h.1M12 12h.1M8 16h.1M16 16h.1" stroke-width="2.8"/></symbol><symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 2c0 6-3 9-9 10 6 0 9 3 9 10 1-7 4-10 9-10-6-1-8-4-9-10z"/></symbol><symbol id="i-prev" viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></symbol><symbol id="i-next" viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></symbol><symbol id="i-volume" viewBox="0 0 24 24"><path d="m12 5-6 4H3v6h3l6 4zM15 9q4 3 0 6m3-9q7 6 0 12"/></symbol><symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol></svg>
-<a class="skip" href="#content">Skip to content</a>
-<header class="mast"><div class="shell mast-inner"><a class="brand" href="#overview"><img src="assets/overtone.svg" alt="" width="46" height="46"><span><strong>Overtone</strong><small>Recursive Soundscapes · Hub's Quest Epoch 1</small></span></a><nav aria-label="Main navigation"><a href="#overview" data-nav="overview">Overview</a><a href="#soundscapes" data-nav="soundscapes">Soundscapes</a><a href="#studio" data-nav="studio">Studio</a></nav><button class="guide-link" data-help><svg class="icon" aria-hidden="true"><use href="#i-help"/></svg><span>Guide</span></button></div></header>
-<main id="content" tabindex="-1">
-<div id="landing" class="shell">
-<section class="hero"><div class="hero-copy"><p class="eyebrow"><span class="rule"></span>GENERATIVE SOUND STUDIO</p><h1>Listen to<br><em>recursion.</em></h1><p class="intro">Grow a musical landscape from a single branch. Shape the pattern, watch it unfold, and hear mathematics turn into sound.</p><div class="hero-actions"><a href="#studio" class="button primary"><svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg>Open studio</a><button class="button secondary" id="preview"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg><span>Play preview</span></button></div><p class="listen-note"><svg class="icon" aria-hidden="true"><use href="#i-headphones"/></svg> Best experienced with headphones</p></div>
-<figure class="gallery" id="gallery" aria-label="Studio render gallery">
-<div class="gallery-stage"><img class="slide shown" data-slide="0" src="assets/scene-0.webp" alt="Tidal Fold recursive tree" width="1000" height="570"><img class="slide " data-slide="1" src="assets/scene-1.webp" alt="Orchid Orbit recursive tree" width="1000" height="570"><img class="slide " data-slide="2" src="assets/scene-2.webp" alt="Amber Bloom recursive tree" width="1000" height="570">
-<div class="stage-top"><span class="glass-label"><b class="lamp"></b>FIELD PREVIEW</span><button class="glass-icon" id="rotate" aria-label="Pause automatic motion"><svg class="icon" aria-hidden="true"><use href="#i-pause"/></svg></button></div>
-<div class="stage-bottom"><span class="mono">FEATURED SOUNDSCAPE</span><strong id="feature-name">Tidal Fold</strong></div>
-<div class="snapshot-pair" aria-label="Other studio snapshots"><button class="mini-shot" id="mini-0" aria-label="Show Orchid Orbit"><img alt="" src="assets/scene-1.webp"></button><button class="mini-shot" id="mini-1" aria-label="Show Amber Bloom"><img alt="" src="assets/scene-2.webp"></button></div></div>
-<figcaption><span class="mono"><span id="slide-number">01</span> / 03</span><div class="segments"><button data-gallery="0" aria-label="Show Tidal Fold" aria-pressed="true"></button><button data-gallery="1" aria-label="Show Orchid Orbit" aria-pressed="false"></button><button data-gallery="2" aria-label="Show Amber Bloom" aria-pressed="false"></button></div><span class="capture-label"><svg class="icon" aria-hidden="true"><use href="#i-wave"/></svg> Studio captures</span></figcaption></figure></section>
-<section class="library" id="soundscapes" aria-labelledby="library-title"><div class="section-top"><div><p class="eyebrow"><span class="rule"></span>PRESET LIBRARY</p><h2 id="library-title">Explore the soundscapes<span>.</span></h2></div><p>Choose a starting point for your session.</p></div><div class="cards"><a class="preset-card theme-0" href="#studio/0" data-preset="0"><div class="card-art"><img src="assets/scene-0.webp" alt="Cyan branching tide tree" width="1000" height="570"><span class="open-card"><svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg></span></div><div class="card-info"><span class="card-mood"><i></i>TIDAL</span><h3>Tidal Fold</h3><p>Felt keys · Ocean tide</p></div></a><a class="preset-card theme-1" href="#studio/1" data-preset="1"><div class="card-art"><img src="assets/scene-1.webp" alt="Pink branching orchid tree" width="1000" height="570"><span class="open-card"><svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg></span></div><div class="card-info"><span class="card-mood"><i></i>ORBITAL</span><h3>Orchid Orbit</h3><p>Glass bells · Soft wind</p></div></a><a class="preset-card theme-2" href="#studio/2" data-preset="2"><div class="card-art"><img src="assets/scene-2.webp" alt="Orange branching bloom tree" width="1000" height="570"><span class="open-card"><svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg></span></div><div class="card-info"><span class="card-mood"><i></i>BLOOM</span><h3>Amber Bloom</h3><p>Warm plucks · Fine rain</p></div></a></div></section>
-<section class="quote-area" aria-label="Quotes on music"><span class="quote-mark" aria-hidden="true">“</span><div id="quote"><blockquote id="quote-text">…the engine might compose elaborate and scientific pieces of music of any degree of complexity or extent.</blockquote><cite id="quote-author">Ada Lovelace · Notes on the Analytical Engine</cite></div><button class="circle-button" id="next-quote" aria-label="Next quotation"><svg class="icon" aria-hidden="true"><use href="#i-next"/></svg></button></section></div>
-<section id="studio" class="shell studio" aria-labelledby="studio-title" hidden><div class="studio-heading"><div><p class="eyebrow"><span class="rule"></span>RECURSIVE SOUND STUDIO</p><h1 id="studio-title" tabindex="-1">Sound <em>studio.</em></h1></div><button class="button secondary" id="download"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg><span>Export WAV</span></button></div>
-<div class="workbench"><div class="instrument"><div class="field-panel"><div class="field-top"><span class="glass-label"><b class="lamp"></b>RECURSION FIELD</span><span class="mono" id="field-phrase"></span></div><canvas id="field" width="1000" height="570" role="img" aria-label="Recursive musical tree"></canvas><div class="field-name"><span class="mono" id="voice-name"></span><h2 id="mood-name"></h2></div></div>
-<div class="transport"><div class="track-top"><span id="status" role="status">Ready</span><span class="mono"><span id="elapsed">0:00</span> / <span id="duration"></span></span></div><div class="score-track"><canvas id="score-strip" width="800" height="45" aria-hidden="true"></canvas><input id="seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="Playback position"></div><div class="transport-buttons"><button class="button primary" id="play"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg><span>Play</span></button><button class="circle-button" id="stop" aria-label="Stop and rewind"><svg class="icon" aria-hidden="true"><use href="#i-stop"/></svg></button><button class="chip" id="loop" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-loop"/></svg>Loop</button><label class="volume"><svg class="icon" aria-hidden="true"><use href="#i-volume"/></svg><input id="volume" type="range" min="0" max="100" value="60" aria-label="Master volume"></label></div></div><p class="trace" id="trace"></p><p class="sr-only" id="phrase-announcement" role="status" aria-live="polite"></p></div>
-<aside class="controls" aria-labelledby="controls-title"><div class="controls-heading"><svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg><h2 id="controls-title">Shape the sound</h2></div><p class="control-hint">Start with a mood, then change one setting at a time.</p><div class="mood-choices" role="group" aria-label="Mood"><button data-mood="0"><i></i>Tidal</button><button data-mood="1"><i></i>Orchid</button><button data-mood="2"><i></i>Amber</button></div>
-<div class="control"><label for="depth">Depth</label><output for="depth" id="depth-value"></output><input type="range" id="depth" min="1" max="6" step="1" aria-describedby="depth-hint"><small id="depth-hint">More levels grow finer branches and quieter notes.</small></div><div class="control"><label for="spread">Branching rhythm</label><output for="spread" id="spread-value"></output><input type="range" id="spread" min="0" max="100" step="1" aria-describedby="spread-hint"><small id="spread-hint">Move split points to change the spacing between notes.</small></div><div class="control"><label for="tempo">Tempo</label><output for="tempo" id="tempo-value"></output><input type="range" id="tempo" min="48" max="84" step="1" aria-describedby="tempo-hint"><small id="tempo-hint">Set how quickly each phrase unfolds.</small></div><div class="control"><label for="space">Space</label><output for="space" id="space-value"></output><input type="range" id="space" min="0" max="100" step="1" aria-describedby="space-hint"><small id="space-hint">Give each note a longer sense of distance.</small></div><div class="control"><label for="ambience">Ambience</label><output for="ambience" id="ambience-value"></output><input type="range" id="ambience" min="0" max="100" step="1" aria-describedby="ambience-hint"><small id="ambience-hint">Mix in the field recording–style tide, wind or rain.</small></div>
-<label class="pulse"><input type="checkbox" id="pulse" checked> Musical pulse</label><small>Align notes to a gentle eighth-note grid.</small><div class="seed"><label for="seed">Seed</label><div><input id="seed" type="number" min="0" max="4294967295" step="1" aria-describedby="seed-hint"><button class="chip" id="shuffle"><svg class="icon" aria-hidden="true"><use href="#i-dice"/></svg>Surprise me</button></div><small id="seed-hint">Use the same number to recreate a pattern.</small></div></aside></div></section></main>
-<footer><div class="shell footer-inner"><span>© 2026 Sibgatul Hassen</span><button class="guide-link" data-help><svg class="icon" aria-hidden="true"><use href="#i-help"/></svg>User manual</button></div></footer>
-<dialog id="manual" role="dialog" aria-modal="true" aria-labelledby="manual-title"><div class="manual-inner"><button class="circle-button" id="close-help" aria-label="Close user manual" autofocus><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button><p class="eyebrow"><span class="rule"></span>FIELD GUIDE</p><h2 id="manual-title">User <em>manual.</em></h2>
-<h3>Listen for the first time</h3><p>Choose Play preview to audition the featured soundscape. Open studio or select a preset card to shape a full composition. Sound starts when you press Play.</p>
-<h3>Follow the tree</h3><p>Each branch divides a stretch of musical time. Its split places a note. The glowing path traces the chain of recursive calls that produced it. Softer, finer tips answer the larger branches.</p><h3>Compose and repeat</h3><p>Choose a mood for a scale, instrument and atmosphere. Depth adds generations, branching rhythm moves the splits, and tempo sets the pace. Space changes the room sound. Ambience mixes in tide, wind or rain. Turn Musical pulse off for freer timing. Keep the mood, seed and settings to recreate a soundscape.</p><h3>Control playback and export</h3><p>Play and Pause hold your place. Stop rewinds. Drag the timeline to seek or enable Loop for a crossfaded repeat. The speaker slider sets listening volume. WAV export uses the mastered composition level. Export WAV downloads the full stereo composition, including its ending.</p><h3>Keyboard and motion</h3><p>Press Space in the studio to play or pause when focus is outside a control. Use Tab and Shift+Tab to move, Enter or Space to activate buttons, and arrow keys to adjust sliders. Escape closes this guide. Automatic motion pauses when you hover or focus the gallery. Your device’s reduced-motion preference starts it paused.</p><label class="pace-label" for="pace">Gallery and quote motion</label><select id="pace"><option value="6000">Calm · every 6 seconds</option><option value="2000">Quick gallery · every 2 seconds</option><option value="0">Still · manual changes only</option></select>
-</div></dialog><p id="notice" class="notice" role="status"></p><script>if(location.protocol==="file:"){const notice=document.createElement("p");notice.className="local-notice";notice.append("To hear and export audio, ");const live=document.createElement("a");live.href="https://sibgatul-hassen.github.io/Epoch1/";live.textContent="open the live studio";notice.append(live," or run python -m http.server 8000 in the project folder and open localhost:8000.");document.body.prepend(notice);}</script><noscript>Enable JavaScript to play and compose a soundscape.</noscript></body></html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#0c111b" />
+    <meta
+      name="description"
+      content="Explore the shape of sound. Grow a recursive tree, listen to its music, and save your own relaxing soundscape."
+    />
+    <title>Overtone — Recursive Soundscapes</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="assets/dm-sans.woff2"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="src/app.js"></script>
+  </head>
+  <body>
+    <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <symbol id="i-play" viewBox="0 0 24 24">
+        <path d="m8 5 11 7-11 7z" fill="currentColor" stroke="none" />
+      </symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24">
+        <path d="M8 5v14m8-14v14" stroke-width="3.5" />
+      </symbol>
+      <symbol id="i-stop" viewBox="0 0 24 24">
+        <rect
+          x="6"
+          y="6"
+          width="12"
+          height="12"
+          rx="2"
+          fill="currentColor"
+          stroke="none"
+        />
+      </symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24">
+        <path d="M4 7h5m4 0h7M4 17h9m4 0h3" />
+        <circle cx="11" cy="7" r="2" />
+        <circle cx="15" cy="17" r="2" />
+      </symbol>
+      <symbol id="i-wave" viewBox="0 0 24 24">
+        <path d="M2 13h2l2-7 3 13 3-16 3 17 3-12 2 5h2" />
+      </symbol>
+      <symbol id="i-headphones" viewBox="0 0 24 24">
+        <path d="M4 14v-2a8 8 0 0 1 16 0v2" />
+        <rect x="3" y="12" width="4" height="7" rx="2" />
+        <rect x="17" y="12" width="4" height="7" rx="2" />
+      </symbol>
+      <symbol id="i-help" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M9.6 9a2.5 2.5 0 1 1 4.5 1.6c-1.2 1.1-2.1 1.3-2.1 3" />
+        <circle cx="12" cy="16.6" r=".7" fill="currentColor" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="m6 6 12 12M18 6 6 18" />
+      </symbol>
+      <symbol id="i-loop" viewBox="0 0 24 24">
+        <path
+          d="m16 3 4 4-4 4M4 11V9a2 2 0 0 1 2-2h13M8 21l-4-4 4-4m12 0v2a2 2 0 0 1-2 2H5"
+        />
+      </symbol>
+      <symbol id="i-download" viewBox="0 0 24 24">
+        <path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4" />
+      </symbol>
+      <symbol id="i-dice" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="4" />
+        <path
+          d="M8 8h.1M16 8h.1M12 12h.1M8 16h.1M16 16h.1"
+          stroke-width="2.8"
+        />
+      </symbol>
+      <symbol id="i-spark" viewBox="0 0 24 24">
+        <path d="M12 2c0 6-3 9-9 10 6 0 9 3 9 10 1-7 4-10 9-10-6-1-8-4-9-10z" />
+      </symbol>
+      <symbol id="i-prev" viewBox="0 0 24 24">
+        <path d="m14 6-6 6 6 6" />
+      </symbol>
+      <symbol id="i-next" viewBox="0 0 24 24">
+        <path d="m10 6 6 6-6 6" />
+      </symbol>
+      <symbol id="i-volume" viewBox="0 0 24 24">
+        <path d="m12 5-6 4H3v6h3l6 4zM15 9q4 3 0 6m3-9q7 6 0 12" />
+      </symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
+      </symbol>
+    </svg>
+    <a class="skip" href="#content">Skip to content</a>
+    <header class="mast">
+      <div class="shell mast-inner">
+        <a class="brand" href="#overview"
+          ><img src="assets/overtone.svg" alt="" width="46" height="46" /><span
+            ><strong>Overtone</strong
+            ><small>Recursive Soundscapes · Hub's Quest Epoch 1</small></span
+          ></a
+        >
+        <nav aria-label="Main navigation">
+          <a href="#overview" data-nav="overview">Overview</a
+          ><a href="#soundscapes" data-nav="soundscapes">Soundscapes</a
+          ><a href="#studio" data-nav="studio">Studio</a>
+        </nav>
+        <button class="guide-link" data-help>
+          <svg class="icon" aria-hidden="true"><use href="#i-help" /></svg
+          ><span>Guide</span>
+        </button>
+      </div>
+    </header>
+    <main id="content" tabindex="-1">
+      <div id="landing" class="shell">
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">
+              <span class="rule"></span>GENERATIVE SOUND STUDIO
+            </p>
+            <h1>Listen to<br /><em>recursion.</em></h1>
+            <p class="intro">
+              Grow a musical landscape from a single branch. Shape the pattern,
+              watch it unfold, and hear mathematics turn into sound.
+            </p>
+            <div class="hero-actions">
+              <a href="#studio" class="button primary" id="open-feature"
+                ><svg class="icon" aria-hidden="true">
+                  <use href="#i-sliders" /></svg
+                >Open studio</a
+              ><button class="button secondary" id="preview">
+                <svg class="icon" aria-hidden="true"><use href="#i-play" /></svg
+                ><span>Play preview</span>
+              </button>
+            </div>
+            <p class="listen-note">
+              <svg class="icon" aria-hidden="true">
+                <use href="#i-headphones" />
+              </svg>
+              Best experienced with headphones
+            </p>
+          </div>
+          <figure
+            class="gallery"
+            id="gallery"
+            aria-label="Studio render gallery"
+          >
+            <div class="gallery-stage">
+              <img
+                class="slide shown"
+                data-slide="0"
+                src="assets/scene-0.webp"
+                alt="Tidal Fold recursive tree"
+                width="1000"
+                height="570"
+              /><img
+                class="slide"
+                data-slide="1"
+                src="assets/orchid-study.webp"
+                alt="Shallow two-level orchid tree"
+                width="1000"
+                height="570"
+              /><img
+                class="slide"
+                data-slide="2"
+                src="assets/amber-study.webp"
+                alt="Deep six-level amber tree"
+                width="1000"
+                height="570"
+              /><img
+                class="slide"
+                data-slide="3"
+                src="assets/tidal-detail.webp"
+                alt="Close-up of Tidal Fold’s filaments"
+                width="1000"
+                height="570"
+              /><img
+                class="slide"
+                data-slide="4"
+                src="assets/studio.webp"
+                alt="The Overtone studio with its tree, playback controls and sound settings"
+                width="1000"
+                height="570"
+              />
+              <div class="stage-top">
+                <span class="glass-label"
+                  ><b class="lamp"></b>FIELD PREVIEW</span
+                ><button
+                  class="glass-icon"
+                  id="rotate"
+                  aria-label="Pause automatic motion"
+                >
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#i-pause" />
+                  </svg>
+                </button>
+              </div>
+              <div class="stage-bottom">
+                <span class="mono">FEATURED SOUNDSCAPE</span
+                ><strong id="feature-name">Tidal Fold</strong>
+              </div>
+              <div class="snapshot-pair" aria-label="Other studio snapshots">
+                <button
+                  class="mini-shot"
+                  id="mini-0"
+                  aria-label="Show Orchid Orbit"
+                >
+                  <img alt="" src="assets/scene-1.webp" /></button
+                ><button
+                  class="mini-shot"
+                  id="mini-1"
+                  aria-label="Show Amber Bloom"
+                >
+                  <img alt="" src="assets/scene-2.webp" /></button
+                ><button
+                  class="mini-shot"
+                  id="mini-2"
+                  aria-label="Show branch detail"
+                >
+                  <img alt="" src="assets/tidal-detail.webp" /></button
+                ><button class="mini-shot" id="mini-3" aria-label="Show studio">
+                  <img alt="" src="assets/studio.webp" />
+                </button>
+              </div>
+            </div>
+            <figcaption>
+              <span class="mono"><span id="slide-number">01</span> / 05</span>
+              <div class="segments">
+                <button
+                  data-gallery="0"
+                  aria-label="Show Tidal Fold"
+                  aria-pressed="true"
+                ></button
+                ><button
+                  data-gallery="1"
+                  aria-label="Show Orchid Orbit"
+                  aria-pressed="false"
+                ></button
+                ><button
+                  data-gallery="2"
+                  aria-label="Show Amber Bloom"
+                  aria-pressed="false"
+                ></button
+                ><button
+                  data-gallery="3"
+                  aria-label="Show branch detail"
+                ></button
+                ><button
+                  data-gallery="4"
+                  aria-label="Show the studio interface"
+                ></button>
+              </div>
+              <span class="capture-label"
+                ><svg class="icon" aria-hidden="true">
+                  <use href="#i-wave" />
+                </svg>
+                Studio captures</span
+              >
+            </figcaption>
+          </figure>
+        </section>
+        <section
+          class="library"
+          id="soundscapes"
+          aria-labelledby="library-title"
+        >
+          <div class="section-top">
+            <div>
+              <p class="eyebrow"><span class="rule"></span>PRESET LIBRARY</p>
+              <h2 id="library-title">Explore the soundscapes<span>.</span></h2>
+            </div>
+            <p>Choose a starting point for your session.</p>
+          </div>
+          <div class="cards">
+            <a class="preset-card theme-0" href="#studio/0" data-preset="0"
+              ><div class="card-art">
+                <img
+                  src="assets/scene-0.webp"
+                  alt="Cyan branching tide tree"
+                  width="1000"
+                  height="570"
+                /><span class="open-card"
+                  ><svg class="icon" aria-hidden="true">
+                    <use href="#i-sliders" /></svg
+                ></span>
+              </div>
+              <div class="card-info">
+                <span class="card-mood"><i></i>TIDAL</span>
+                <h3>Tidal Fold</h3>
+                <p>Felt keys · Ocean tide</p>
+              </div></a
+            ><a class="preset-card theme-1" href="#studio/1" data-preset="1"
+              ><div class="card-art">
+                <img
+                  src="assets/scene-1.webp"
+                  alt="Pink branching orchid tree"
+                  width="1000"
+                  height="570"
+                /><span class="open-card"
+                  ><svg class="icon" aria-hidden="true">
+                    <use href="#i-sliders" /></svg
+                ></span>
+              </div>
+              <div class="card-info">
+                <span class="card-mood"><i></i>ORBITAL</span>
+                <h3>Orchid Orbit</h3>
+                <p>Glass bells · Soft wind</p>
+              </div></a
+            ><a class="preset-card theme-2" href="#studio/2" data-preset="2"
+              ><div class="card-art">
+                <img
+                  src="assets/scene-2.webp"
+                  alt="Orange branching bloom tree"
+                  width="1000"
+                  height="570"
+                /><span class="open-card"
+                  ><svg class="icon" aria-hidden="true">
+                    <use href="#i-sliders" /></svg
+                ></span>
+              </div>
+              <div class="card-info">
+                <span class="card-mood"><i></i>BLOOM</span>
+                <h3>Amber Bloom</h3>
+                <p>Warm plucks · Fine rain</p>
+              </div></a
+            >
+          </div>
+        </section>
+        <section class="quote-area" aria-label="Quotes on music">
+          <span class="quote-mark" aria-hidden="true">“</span>
+          <div id="quote">
+            <blockquote id="quote-text">
+              …the engine might compose elaborate and scientific pieces of music
+              of any degree of complexity or extent.
+            </blockquote>
+            <cite id="quote-author"
+              >Ada Lovelace · Notes on the Analytical Engine</cite
+            >
+          </div>
+          <button
+            class="circle-button"
+            id="next-quote"
+            aria-label="Next quotation"
+          >
+            <svg class="icon" aria-hidden="true"><use href="#i-next" /></svg>
+          </button>
+        </section>
+      </div>
+      <section
+        id="studio"
+        class="shell studio"
+        aria-labelledby="studio-title"
+        hidden
+      >
+        <div class="studio-heading">
+          <div>
+            <p class="eyebrow">
+              <span class="rule"></span>RECURSIVE SOUND STUDIO
+            </p>
+            <h1 id="studio-title" tabindex="-1">Sound <em>studio.</em></h1>
+          </div>
+          <button class="button secondary" id="download">
+            <svg class="icon" aria-hidden="true"><use href="#i-download" /></svg
+            ><span>Export WAV</span>
+          </button>
+        </div>
+        <div class="workbench">
+          <div class="instrument">
+            <div class="field-panel">
+              <div class="field-top">
+                <span class="glass-label"
+                  ><b class="lamp"></b>RECURSION FIELD</span
+                ><span class="mono" id="field-phrase"></span>
+              </div>
+              <canvas
+                id="field"
+                width="1000"
+                height="570"
+                role="img"
+                aria-label="Recursive musical tree"
+              ></canvas>
+              <div class="field-name">
+                <span class="mono" id="voice-name"></span>
+                <h2 id="mood-name"></h2>
+              </div>
+            </div>
+            <div class="transport">
+              <div class="track-top">
+                <span id="status" role="status">Ready</span
+                ><span class="mono"
+                  ><span id="elapsed">0:00</span> / <span id="duration"></span
+                ></span>
+              </div>
+              <div class="score-track">
+                <canvas
+                  id="score-strip"
+                  width="800"
+                  height="45"
+                  aria-hidden="true"
+                ></canvas
+                ><input
+                  id="seek"
+                  type="range"
+                  min="0"
+                  max="100"
+                  value="0"
+                  step="0.1"
+                  aria-label="Playback position"
+                />
+              </div>
+              <div class="transport-buttons">
+                <button class="button primary" id="play">
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#i-play" /></svg
+                  ><span>Play</span></button
+                ><button
+                  class="circle-button"
+                  id="stop"
+                  aria-label="Stop and rewind"
+                >
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#i-stop" />
+                  </svg></button
+                ><button class="chip" id="loop" aria-pressed="false">
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#i-loop" /></svg
+                  >Loop</button
+                ><label class="volume"
+                  ><svg class="icon" aria-hidden="true">
+                    <use href="#i-volume" /></svg
+                  ><input
+                    id="volume"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="60"
+                    aria-label="Master volume"
+                /></label>
+              </div>
+            </div>
+            <p class="trace" id="trace"></p>
+            <p
+              class="sr-only"
+              id="phrase-announcement"
+              role="status"
+              aria-live="polite"
+            ></p>
+          </div>
+          <aside class="controls" aria-labelledby="controls-title">
+            <div class="controls-heading">
+              <svg class="icon" aria-hidden="true">
+                <use href="#i-sliders" />
+              </svg>
+              <h2 id="controls-title">Shape the sound</h2>
+            </div>
+            <p class="control-hint">
+              Start with a mood, then change one setting at a time.
+            </p>
+            <div class="mood-choices" role="group" aria-label="Mood">
+              <button data-mood="0"><i></i>Tidal</button
+              ><button data-mood="1"><i></i>Orchid</button
+              ><button data-mood="2"><i></i>Amber</button>
+            </div>
+            <div class="control">
+              <label for="depth">Depth</label
+              ><output for="depth" id="depth-value"></output
+              ><input
+                type="range"
+                id="depth"
+                min="1"
+                max="6"
+                step="1"
+                aria-describedby="depth-hint"
+              /><small id="depth-hint"
+                >More levels grow finer branches and quieter notes.</small
+              >
+            </div>
+            <div class="control">
+              <label for="spread">Branching rhythm</label
+              ><output for="spread" id="spread-value"></output
+              ><input
+                type="range"
+                id="spread"
+                min="0"
+                max="100"
+                step="1"
+                aria-describedby="spread-hint"
+              /><small id="spread-hint"
+                >Move split points to change the spacing between notes.</small
+              >
+            </div>
+            <div class="control">
+              <label for="tempo">Tempo</label
+              ><output for="tempo" id="tempo-value"></output
+              ><input
+                type="range"
+                id="tempo"
+                min="48"
+                max="84"
+                step="1"
+                aria-describedby="tempo-hint"
+              /><small id="tempo-hint"
+                >Set how quickly each phrase unfolds.</small
+              >
+            </div>
+            <div class="control">
+              <label for="space">Space</label
+              ><output for="space" id="space-value"></output
+              ><input
+                type="range"
+                id="space"
+                min="0"
+                max="100"
+                step="1"
+                aria-describedby="space-hint"
+              /><small id="space-hint"
+                >Give each note a longer sense of distance.</small
+              >
+            </div>
+            <div class="control">
+              <label for="ambience">Ambience</label
+              ><output for="ambience" id="ambience-value"></output
+              ><input
+                type="range"
+                id="ambience"
+                min="0"
+                max="100"
+                step="1"
+                aria-describedby="ambience-hint"
+              /><small id="ambience-hint"
+                >Mix in the field recording–style tide, wind or rain.</small
+              >
+            </div>
+            <label class="pulse"
+              ><input type="checkbox" id="pulse" checked /> Musical pulse</label
+            ><small>Align notes to a gentle eighth-note grid.</small>
+            <div class="seed">
+              <label for="seed">Seed</label>
+              <div>
+                <input
+                  id="seed"
+                  type="number"
+                  min="0"
+                  max="4294967295"
+                  step="1"
+                  aria-describedby="seed-hint"
+                /><button class="chip" id="shuffle">
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#i-dice" /></svg
+                  >Surprise me
+                </button>
+              </div>
+              <small id="seed-hint"
+                >Use the same number to recreate a pattern.</small
+              >
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="shell footer-inner">
+        <span>© 2026 Sibgatul Hassen</span
+        ><button class="guide-link" data-help>
+          <svg class="icon" aria-hidden="true"><use href="#i-help" /></svg>User
+          manual
+        </button>
+      </div>
+    </footer>
+    <dialog
+      id="manual"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="manual-title"
+    >
+      <div class="manual-inner">
+        <button
+          class="circle-button"
+          id="close-help"
+          aria-label="Close user manual"
+          autofocus
+        >
+          <svg class="icon" aria-hidden="true"><use href="#i-close" /></svg>
+        </button>
+        <p class="eyebrow"><span class="rule"></span>FIELD GUIDE</p>
+        <h2 id="manual-title">User <em>manual.</em></h2>
+        <h3>Listen for the first time</h3>
+        <p>
+          Choose Play preview to audition the featured soundscape. Open studio
+          or select a preset card to shape a full composition. Sound starts when
+          you press Play.
+        </p>
+        <h3>Follow the tree</h3>
+        <p>
+          Each branch divides a stretch of musical time. Its split places a
+          note. The glowing path traces the chain of recursive calls that
+          produced it. Softer, finer tips answer the larger branches.
+        </p>
+        <h3>Compose and repeat</h3>
+        <p>
+          Choose a mood for a scale, instrument and atmosphere. Depth adds
+          generations, branching rhythm moves the splits, and tempo sets the
+          pace. Space changes the room sound. Ambience mixes in tide, wind or
+          rain. Turn Musical pulse off for freer timing. Keep the mood, seed and
+          settings to recreate a soundscape.
+        </p>
+        <h3>Control playback and export</h3>
+        <p>
+          Play and Pause hold your place. Stop rewinds. Drag the timeline to
+          seek or enable Loop for a crossfaded repeat. The speaker slider sets
+          listening volume. WAV export uses the mastered composition level.
+          Export WAV downloads the full stereo composition, including its
+          ending.
+        </p>
+        <h3>Keyboard and motion</h3>
+        <p>
+          Press Space in the studio to play or pause when focus is outside a
+          control. Use Tab and Shift+Tab to move, Enter or Space to activate
+          buttons, and arrow keys to adjust sliders. Escape closes this guide.
+          Automatic motion pauses when you hover or focus the gallery. Your
+          device’s reduced-motion preference starts it paused.
+        </p>
+        <label class="pace-label" for="pace">Gallery and quote motion</label
+        ><select id="pace">
+          <option value="6000">Calm · every 6 seconds</option>
+          <option value="2000">Quick gallery · every 2 seconds</option>
+          <option value="0">Still · manual changes only</option>
+        </select>
+      </div>
+    </dialog>
+    <p id="notice" class="notice" role="status"></p>
+    <script>
+      if (location.protocol === "file:") {
+        const notice = document.createElement("p");
+        notice.className = "local-notice";
+        notice.append("To hear and export audio, ");
+        const live = document.createElement("a");
+        live.href = "https://sibgatul-hassen.github.io/Epoch1/";
+        live.textContent = "open the live studio";
+        notice.append(
+          live,
+          " or run python -m http.server 8000 in the project folder and open localhost:8000.",
+        );
+        document.body.prepend(notice);
+      }
+    </script>
+    <noscript>Enable JavaScript to play and compose a soundscape.</noscript>
+  </body>
+</html>

@@ -33,7 +33,7 @@ The [worker](src/audio-worker.js) renders the score through [the synthesizer](sr
 
 From the repository root, run `python -m http.server 8000` (on Windows, `py -m http.server 8000`), then open **http://localhost:8000/**. With Node installed, `npx serve .` is an alternative. The Python route requires no installation or build step beyond Python itself.
 
-GitHub Pages serves the root of `main`. All app resources use relative paths, including the module Worker. The optional Sites manifest in `.openai/hosting.json` targets a static copy in `dist/`. Readable source lives at the root and in `src/`.
+GitHub Pages serves the root of `main`. All app resources use relative paths, including the module Worker. Readable source lives at the root and in `src/`.
 
 Use a modern browser with Web Audio, Canvas 2D, native dialog and module Worker support over HTTPS or localhost. The manual explains keyboard and touch controls. Reduced-motion mode starts the gallery still and simplifies playback highlights.
 
