@@ -43,8 +43,9 @@ export function compose(input) {
   const tempo = clamp(settings.tempo, 48, 84);
   const spread = clamp(settings.spread, 0, 100);
   const random = randomSource(settings.seed);
-  const phraseLength = 16 * 60 / tempo;
-  const phraseCount = 6 + (Math.abs(settings.seed) % 3);
+  const beatsPerPhrase = 16 + 8 * Math.max(0, depth - 4);
+  const phraseLength = beatsPerPhrase * 60 / tempo;
+  const phraseCount = Math.min(6 + settings.seed % 3, Math.floor(168 / phraseLength));
   const span = phraseCount * phraseLength;
   const phrases = [];
   const events = [];

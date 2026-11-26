@@ -8,9 +8,20 @@ export class Player {
     if(!this.context){
       this.context=new AudioContext();
       this.master=this.context.createGain(); this.master.gain.value=this.level;
-      this.master.connect(this.context.destination);
+      this.analyser=this.context.createAnalyser();this.analyser.fftSize=256;
+      this.samples=new Float32Array(this.analyser.fftSize);this.smoothed=0;
+      this.master.connect(this.analyser);this.analyser.connect(this.context.destination);
     }
     return this.context.resume();
+  }
+  energy(){
+    if(!this.analyser)return 0;
+    this.analyser.getFloatTimeDomainData(this.samples);
+    let sum=0;
+    for(const sample of this.samples)sum+=sample*sample;
+    const rms=Math.sqrt(sum/this.samples.length);
+    this.smoothed += 0.28*(Math.min(1,rms*8)-this.smoothed);
+    return this.smoothed;
   }
   setVolume(value){
     this.level=clamp(value,0,1);
@@ -92,9 +103,9 @@ export class Player {
     source.onended=()=>{if(this.active?.source===source){this.active=null;this.offset=0;this.onend?.();}source.disconnect();gain.disconnect();};
     source.start(now,start);
   }
-  async download(settings,name){
-    const track=await this.prepare(settings);
-    const blob=new Blob([waveFile(track.pcm,this.level)],{type:"audio/wav"});
+  async download(settings,name,prepared=null){
+    const track=prepared||await this.prepare(settings);
+    const blob=new Blob([waveFile(track.pcm,1)],{type:"audio/wav"});
     const url=URL.createObjectURL(blob), link=document.createElement("a");
     link.href=url;link.download=name;document.body.append(link);link.click();link.remove();
     setTimeout(()=>URL.revokeObjectURL(url),60000);

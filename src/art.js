@@ -56,6 +56,23 @@ function treeLayout(phrase, settings) {
     const control={x:(a.x+b.x)/2+Math.sin(angle)*length*bend,y:(a.y+b.y)/2-Math.cos(angle)*length*bend};
     geometry.set(note.id,{note,a,b,control,angle,length});
   }
+  const items=[...geometry.values()];
+  const xs=[],ys=[];
+  for(const {a,b,control,length,note} of items){
+    const plume=note.leaf?length*0.92:0;
+    xs.push(a.x,control.x,b.x-plume,b.x+plume);
+    ys.push(a.y,control.y,b.y-plume,b.y+plume);
+  }
+  const left=Math.min(...xs),right=Math.max(...xs),top=Math.min(...ys),bottom=Math.max(...ys);
+  const scale=Math.min(1.24,865/(right-left),440/(bottom-top));
+  const visited=new Set();
+  for(const branch of items){
+    for(const p of [branch.a,branch.b,branch.control]){
+      if(visited.has(p))continue;
+      visited.add(p);p.x=500+(p.x-(left+right)/2)*scale;p.y=486+(p.y-bottom)*scale;
+    }
+    branch.length*=scale;
+  }
   return geometry;
 }
 function filament(ctx, branch, palette, random) {
@@ -100,21 +117,47 @@ export function makeField(canvas,score,settings,phraseIndex=0){
   fit(ctx,base.width,base.height);
   const random=randomSource(settings.seed+phraseIndex*127);
   atmosphere(ctx,palette,random);
+  const background=document.createElement("canvas");
+  background.width=base.width;background.height=base.height;
+  background.getContext("2d").drawImage(base,0,0);
+  const origin=geometry.get(0).a;
   for(const branch of geometry.values())filament(ctx,branch,palette,random);
-  haze(ctx,497,482,32,palette.light,0.45);
+  haze(ctx,origin.x,origin.y,32,palette.light,0.45);
   ctx.fillStyle=rgba(palette.twig,0.9);
-  ctx.fillRect(494,481,6,2);
-  return {base,geometry,palette,phrase};
+  ctx.fillRect(origin.x-3,origin.y-1,6,2);
+  const grown=document.createElement("canvas");
+  grown.width=base.width;grown.height=base.height;
+  return {base,background,grown,geometry,palette,phrase,origin,lit:new Set(),last:-1};
 }
 export function drawField(canvas,field,time=null,reduced=false,cadenceTime=null){
   const ctx=canvas.getContext("2d");
   ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(field.base,0,0);
   if(time===null)return;
+  if(!reduced){
+    const grow=field.grown.getContext("2d");
+    if(field.last<0||time<field.last){
+      grow.setTransform(1,0,0,1,0,0);
+      grow.drawImage(field.background,0,0);grow.globalAlpha=0.2;
+      grow.drawImage(field.base,0,0);grow.globalAlpha=1;field.lit.clear();
+    }
+    fit(grow,canvas.width,canvas.height);
+    for(const branch of field.geometry.values()){
+      if(branch.note.time>time||field.lit.has(branch.note.id))continue;
+      filament(grow,branch,field.palette,randomSource(branch.note.id+731));field.lit.add(branch.note.id);
+    }
+    field.last=time;ctx.drawImage(field.grown,0,0);
+  }
   fit(ctx,canvas.width,canvas.height);
   for(const branch of field.geometry.values()){
     const elapsed=time-branch.note.time;
     if(elapsed<0||elapsed>1.35)continue;
     const opacity=1-elapsed/1.35, {a,b,control}=branch;
+    let ancestor=field.geometry.get(branch.note.parent);
+    ctx.strokeStyle=rgba(field.palette.twig,opacity*0.52);ctx.lineWidth=1.6;
+    while(ancestor){
+      line(ctx,ancestor.a,ancestor.b,ancestor.control);
+      ancestor=field.geometry.get(ancestor.note.parent);
+    }
     ctx.strokeStyle=rgba(field.palette.twig,opacity);ctx.lineWidth=2;
     line(ctx,a,b,control,reduced?1:clamp(elapsed/0.24,0,1));
     if(!reduced)haze(ctx,b.x,b.y,12+elapsed*15,field.palette.light,opacity*0.68);
@@ -122,7 +165,7 @@ export function drawField(canvas,field,time=null,reduced=false,cadenceTime=null)
     ctx.arc(b.x,b.y,reduced?3:2.5+opacity*3,0,tau);ctx.fill();
   }
   if(cadenceTime!==null && time>=cadenceTime && time<cadenceTime+2){
-    haze(ctx,497,482,reduced?12:32,field.palette.twig,0.8*(1-(time-cadenceTime)/2));
+    haze(ctx,field.origin.x,field.origin.y,reduced?12:32,field.palette.twig,0.8*(1-(time-cadenceTime)/2));
   }
 }
 export function drawScoreStrip(canvas,score,index){

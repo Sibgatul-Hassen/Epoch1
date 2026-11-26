@@ -211,3 +211,7 @@ I found the reviewer’s checklist. I’ll handle P0 items 1–4 first and check
 ## Assistant response - 2026-11-26T11:36:43.021Z
 
 The first engine checks passed. Across the tested settings, pieces lasted 74–166 seconds, and the WAV encoder safely handled oversized samples. I’ve since added the reviewer’s pulse grid and quieter mastering target. I’ll recheck both against the finished player and commit a checkpoint under your configured Git identity.
+
+## Assistant response - 2026-11-26T11:45:37.038Z
+
+The studio now plays and exports the same generated score. At the Tidal Fold preset, raising depth from 3 to 6 produces 15, 26, 46, then 63 sounding nodes in the first phrase. I’ve captured the three gallery images from the renderer and am checking the full interaction in Chrome, including mobile layout, keyboard navigation, and downloaded audio.
