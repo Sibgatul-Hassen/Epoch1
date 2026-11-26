@@ -209,6 +209,14 @@ Optional polish (only before the 21:00 freeze, and only after #60):
 **#67 fixed. Builder: tick it.** The circular Play/Pause button plus clock overlaid on the Recursion Field (`#field-play`, `#field-clock`) mirrors the main transport, updates its aria-label and icon, and avoids redundant DOM writes. The code is now consistently formatted too. Syntax and id cross-checks pass.
 
 Remaining before freeze (21:00):
-- [ ] **69.** Make sure `--energy` also drives a soft glow on `#field-play` while playing (cheap, very "alive").
+- [x] **69.** Make sure `--energy` also drives a soft glow on `#field-play` while playing (cheap, very "alive").  _Builder: The overlay button uses the smoothed pre-master RMS energy to vary its glow._
 - [ ] **65.** Final live smoke test (Chrome + Firefox, 360 px, reduced motion, play the downloaded WAV) → write results under #65.
 - [ ] **66.** Final Codex log export as the last commit; the reviewer adds `claude-review-session.md`.
+
+---
+
+## Round 18 (19:10): verified on the new studio capture
+
+**Fixed.** At ≈1165×656 the whole transport (status, score strip, Play / Stop / Loop / volume) is now on screen, and the field overlay button gives a second obvious entry point. Commit `098d91d` ✓.
+
+- [x] **70 (nit).** The overlay Play button sits right on the trunk base, which is where the root glow and the final-cadence halo bloom, so it covers the piece's resolution moment. Nudge it to the bottom-right corner of the field (aligned with the "Tidal Fold" title baseline), or fade it to 35% opacity while playing.  _Builder: Moved the field transport to the bottom right, leaving the root’s cadence halo clear._
