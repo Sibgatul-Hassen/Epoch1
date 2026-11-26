@@ -1347,6 +1347,116 @@ Desktop is unchanged: it still has the original mouse-sized dots and sliders and
 
 - 🔧 **Bash**: Commit, push, update logs
 
+- 🔧 **TaskStop**: bcye5rb4s
+
+Yes, it now works well on phones, and the desktop layout is unchanged. The fixes are pushed (`d299449`) and will appear on the live site within a minute or two.
+
+I tested every page (landing, Studio, Recursion, manual) in headless Chrome at small phone, standard phone, large phone, tablet and landscape phone sizes, with touch emulation. It never scrolled sideways, but phones had four real problems:
+
+| Problem on phones | Fix |
+|---|---|
+| The 4 nav links ran off both edges ("Overview" and "Studio" cut off) | The links now share the row evenly |
+| Card figures collided ("LEVELSNOTESBPM") | Below 560 px, cards put the picture on top, so the four figures have the full width |
+| Gallery thumbnails (35×22 px) and dots were too small to tap | On phones the thumbnails are hidden (tapping the main picture still opens the soundscape), and the dots are 30×36 px on touch screens |
+| Sliders were thin for fingers | Bigger thumbs and a 34 px tall touch area on touch screens |
+
+I also tidied three smaller things:
+- the gallery counter no longer wraps onto two lines
+- on the narrowest phones the instrument label ends with "…" instead of sliding under the round Play button
+- the header fits on one row at 320 px
+
+**Re-test:** every page, at every size, has no overflow, no small tap targets and no errors.
+
+**Desktop check:** every new rule only applies at phone widths or on touch screens. I re-ran the test at 1280 px and 1920 px and the desktop still uses the original sizes.
+
+The AI log is updated (`389582a`). Before 10 PM, open the live link on your own phone for a quick look, listen on headphones, then submit the form.
+
+## 👤 Owner prompt · 2026-11-26 13:15:59 UTC
+
+_Attached: image, image_
+
+the progress tracker matches perfectly with the time stamp for the web version but doesnt match on mobile screens(second ss).
+
+also i think you need to take a look at both the rotations for both mobile and web . i want them to keep rotating as long as we are on the page .
+
+after youre done re-evaluate then push
+
+## 🤖 Claude Code · 2026-11-26 13:16:19 UTC
+
+Two things to look into. I'll start with the Studio's progress bar on phones by measuring where the marker actually sits compared with where the elapsed time says it should be:
+
+- 🔧 **Bash**: Inspect score strip and seek CSS
+
+- 🔧 **Write**: ~\AppData\Local\Temp\claude\bed141e408e17ecd\42fba2b1-2320-451a-8dc5-4313e3359b9d\scratchpad\seek-check.mjs
+
+- 🔧 **Bash**: Start local static server
+
+- 🔧 **Bash**: Measure progress marker offset on phone vs desktop
+
+My detector picked up the tallest waveform bar instead of the marker. I'll make it look for the marker's exact colour:
+
+- 🔧 **Bash**: Re-measure marker using accent colour
+
+Colour detection still isn't reliable because the waveform bars share the accent colour. I'll just look at the captured strip directly:
+
+- 🔧 **Bash**: Save strip crops on phone emulation
+
+- 🔧 **Bash**: Locate saved strip crops
+
+- 🔧 **Bash**: Copy crop into scratchpad
+
+- 🔧 **Read**: ~\AppData\Local\Temp\claude\bed141e408e17ecd\42fba2b1-2320-451a-8dc5-4313e3359b9d\scratchpad\seek-390-3.png
+
+- 🔧 **Bash**: Read strip drawing and rotation code
+
+Now the edits. Rotation: no more pausing on hover or focus. It keeps going while you're on the landing page and stops only when you leave the page, switch tabs, or choose "Still" in the manual.
+
+- 🔧 **Edit**: d:\Epoch1\src\app.js
+
+- 🔧 **Edit**: d:\Epoch1\src\app.js
+
+- 🔧 **Edit**: d:\Epoch1\src\app.js
+
+- 🔧 **Bash**: Review remaining rotation references
+
+Now the playhead. I'll draw it from the clock's own number, fill the played part of the waveform, and hide the browser's thumb (the slider still handles tapping and dragging):
+
+- 🔧 **Edit**: d:\Epoch1\src\art.js
+
+- 🔧 **Bash**: Check end of drawScoreStrip
+
+- 🔧 **Edit**: d:\Epoch1\src\art.js
+
+- 🔧 **Edit**: d:\Epoch1\src\app.js
+
+- 🔧 **Edit**: d:\Epoch1\src\app.js
+
+- 🔧 **Edit**: d:\Epoch1\src\app.js
+
+- 🔧 **Edit**: d:\Epoch1\src\app.js
+
+- 🔧 **Edit**: d:\Epoch1\src\player.js
+
+Now the playhead element and its styles:
+
+- 🔧 **Edit**: d:\Epoch1\index.html
+
+- 🔧 **Bash**: Add playhead CSS and syntax check
+
+All files pass the syntax check. Now the re-evaluation: playhead alignment on phone and desktop, played-portion fill, rotation surviving taps, hover and focus, and a full regression pass.
+
+- 🔧 **Write**: ~\AppData\Local\Temp\claude\bed141e408e17ecd\42fba2b1-2320-451a-8dc5-4313e3359b9d\scratchpad\eval4.mjs
+
+- 🔧 **Bash**: Evaluate playhead and rotation on phone and desktop
+
+- 🔧 **Read**: ~\AppData\Local\Temp\claude\bed141e408e17ecd\42fba2b1-2320-451a-8dc5-4313e3359b9d\scratchpad\e4-mob.png
+
+- 🔧 **Bash**: Test tap-to-seek and run full regression
+
+- 🔧 **Bash**: Confirm resume after seek; show full audit
+
+- 🔧 **Bash**: Commit, push, update logs
+
 ---
 
 _End of export. The session's final hand-off message was written after this file was generated._
