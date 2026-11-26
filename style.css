@@ -418,6 +418,45 @@ h2 em {
   font-size: 0.7rem;
   letter-spacing: 0.15em;
 }
+.field-transport {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 2px;
+  pointer-events: none;
+}
+.field-transport button {
+  pointer-events: auto;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: #09222b;
+  border: 1px solid #dbffffa6;
+  box-shadow: 0 0 calc(12px + 32px * var(--energy, 0)) #76dfef55;
+}
+.field-transport span {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+.field-panel canvas {
+  max-height: 54svh;
+}
+@media (max-width: 680px) {
+  .field-transport {
+    left: auto;
+    right: 1rem;
+    transform: none;
+    bottom: 0.65rem;
+  }
+}
 .stage-bottom strong,
 .field-name h2 {
   font-weight: 500;

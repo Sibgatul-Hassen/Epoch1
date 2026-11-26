@@ -5,7 +5,6 @@ export class Player {
     this.level = 0.6;
     this.loop = false;
     this.offset = 0;
-    this.revision = 0;
   }
   unlock() {
     if (!this.context) {

@@ -193,8 +193,12 @@ function drawAt(time, force = false) {
         .join(" › ") +
       (last.leaf ? " › leaf" : "")
     : field.phrase.notes.length + " sounding nodes · each split places a note";
-  byId("trace").textContent = trace;
-  byId("elapsed").textContent = clock(time);
+  if (byId("trace").textContent !== trace) byId("trace").textContent = trace;
+  const displayTime = clock(time);
+  if (byId("elapsed").textContent !== displayTime) {
+    byId("elapsed").textContent = displayTime;
+    byId("field-clock").textContent = displayTime;
+  }
   byId("seek").value = time;
   byId("seek").setAttribute(
     "aria-valuetext",
@@ -218,7 +222,16 @@ function animate(now) {
   }
   if (player.active && previewing && player.position() >= 16) stop();
 }
+byId("field-play").onclick = () => byId("play").click();
 function resetButtons() {
+  const fieldPlay = byId("field-play");
+  fieldPlay.setAttribute(
+    "aria-label",
+    playingIntent ? "Pause composition" : "Play composition",
+  );
+  fieldPlay
+    .querySelector("use")
+    .setAttribute("href", playingIntent ? "#i-pause" : "#i-play");
   labelButton(
     byId("play"),
     playingIntent ? "pause" : "play",

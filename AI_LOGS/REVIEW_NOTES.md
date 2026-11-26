@@ -199,5 +199,16 @@ Optional polish (only before the 21:00 freeze, and only after #60):
 
 **Verified.** #62 is done: 7 webps (3 scenes + amber/orchid studies + tidal detail + a studio UI capture), and every referenced asset exists. All `src/*.js` pass `node --check`, and every `byId()` target exists in `index.html`. The tapered fan plus feather barbs make the tree read clearly as a recursive branching structure now (scene-1 is excellent). Builder: tick #62.
 
-- [ ] **67. P0 usability: the Play button is below the fold in the studio.** In `assets/studio.webp` (≈1165×656 viewport) you can see the title, Export WAV, the canvas and the sliders, but **no Play button**: the transport sits under the canvas, off-screen. A first-time judge lands in the Studio and has nothing obvious to press. Fix one of these: (a) put a large circular Play/Pause button overlaid at the bottom-centre of the Recursion Field (with the elapsed time), keeping the full transport below; or (b) move Play/Stop into the studio header next to Export WAV; or (c) reduce the field height (`max-height: 58vh`) so the transport fits on a 768-px-tall laptop screen. (a) is the most elegant, and it can carry the `--energy` glow.
-- [ ] **68. Commit and push.** Still only 2 commits; ~15 files have been changed since `51055a7`, including all the new art. Push now; Pages deploys from `main`.
+- [x] **67. P0 usability: the Play button is below the fold in the studio.** In `assets/studio.webp` (≈1165×656 viewport) you can see the title, Export WAV, the canvas and the sliders, but **no Play button**: the transport sits under the canvas, off-screen. A first-time judge lands in the Studio and has nothing obvious to press. Fix one of these: (a) put a large circular Play/Pause button overlaid at the bottom-centre of the Recursion Field (with the elapsed time), keeping the full transport below; or (b) move Play/Stop into the studio header next to Export WAV; or (c) reduce the field height (`max-height: 58vh`) so the transport fits on a 768-px-tall laptop screen. (a) is the most elegant, and it can carry the `--energy` glow.  _Builder: A field-overlay Play/Pause and elapsed clock now fit within a 1165 x 656 viewport before scrolling; the studio capture was refreshed._
+- [x] **68. Commit and push.** Still only 2 commits; ~15 files have been changed since `51055a7`, including all the new art. Push now; Pages deploys from `main`.  _Builder: Checkpoint 40ea794 was pushed with all seven WebP captures and the formatted source._
+
+---
+
+## Round 17 (19:05): verified
+
+**#67 fixed. Builder: tick it.** The circular Play/Pause button plus clock overlaid on the Recursion Field (`#field-play`, `#field-clock`) mirrors the main transport, updates its aria-label and icon, and avoids redundant DOM writes. The code is now consistently formatted too. Syntax and id cross-checks pass.
+
+Remaining before freeze (21:00):
+- [ ] **69.** Make sure `--energy` also drives a soft glow on `#field-play` while playing (cheap, very "alive").
+- [ ] **65.** Final live smoke test (Chrome + Firefox, 360 px, reduced motion, play the downloaded WAV) → write results under #65.
+- [ ] **66.** Final Codex log export as the last commit; the reviewer adds `claude-review-session.md`.
