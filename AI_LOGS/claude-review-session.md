@@ -1457,6 +1457,63 @@ All files pass the syntax check. Now the re-evaluation: playhead alignment on ph
 
 - 🔧 **Bash**: Commit, push, update logs
 
+Pushed. I'll confirm on the live site once GitHub Pages deploys:
+
+- 🔧 **Bash**: Verify fixes on the live site
+
+- 🔧 **TaskStop**: bfch6lwk3
+
+Both fixes are live, and I re-tested them on the live site in a phone-sized emulator. I couldn't test a real handset, so a quick check on your own phone is still worthwhile.
+
+**1. Progress marker on mobile**
+
+There were two causes:
+- The marker was the browser's built-in slider thumb, and mobile browsers place and size that thumb differently from desktop.
+- Phones, and Bluetooth headphones especially, play audio slightly later than the audio clock reports. So the marker ran ahead of what you heard.
+
+What changed:
+- **The browser's thumb is hidden.** The slider is still there, so tapping or dragging the strip still seeks.
+- **The app draws its own playhead** from exactly the same number as the time display.
+- **The part of the waveform you've already heard is filled in bright,** so progress is obvious at a glance.
+- **The visuals subtract the device's reported audio delay,** so the playhead, the clock and the glowing tree follow what you actually hear.
+
+Measured results:
+- the playhead is within **0.2 px** of the timestamp on both phone and desktop, and on the live site the worst case was 0.14 px
+- tapping 75% of the way along the strip jumps to 75%, and playback carries on
+- the playhead stays put while paused
+
+**2. Rotation**
+
+The gallery and quotes used to pause on hover or focus. On phones a tap leaves that state behind, so the rotation could stop for good. Now both keep rotating for as long as you're on the landing page: the gallery every 2 s and the quotes every 4.5 s. They stop only when you leave the page or switch tabs, and the gallery can still be set to "Still" in the manual. On the live site, after tapping a dot and the next-quote button, I counted 5 slides and 3 quotes in 10 seconds.
+
+**Regression check:** start time, playback continuing past the first 16 s, gallery click-through, WAV export, all the Recursion lessons and the 320 and 390 px phone layouts all pass, with no errors.
+
+The fixes are in commit `81ee551`, and the AI log is updated in `466d4ba`.
+
+## 👤 Owner prompt · 2026-11-26 13:31:03 UTC
+
+_Attached: image_
+
+the background of the logo blinks every few seconds make it a little bit more brighter
+
+## 🤖 Claude Code · 2026-11-26 13:31:10 UTC
+
+- 🔧 **Bash**: Find logo breathe animation CSS
+
+- 🔧 **Edit**: d:\Epoch1\style.css
+
+- 🔧 **Bash**: Capture logo at rest and at glow peak
+
+- 🔧 **Read**: ~\AppData\Local\Temp\claude\bed141e408e17ecd\42fba2b1-2320-451a-8dc5-4313e3359b9d\scratchpad\logo-rest.png
+
+- 🔧 **Read**: ~\AppData\Local\Temp\claude\bed141e408e17ecd\42fba2b1-2320-451a-8dc5-4313e3359b9d\scratchpad\logo-peak.png
+
+At its peak the logo now has a clearly visible cyan glow with a hint of pink, and the tree itself brightens a little. At rest it settles back to a faint edge glow. Committing and pushing:
+
+- 🔧 **Bash**: Commit, push, update logs
+
+- 🔧 **PowerShell**: Stop leftover local test server
+
 ---
 
 _End of export. The session's final hand-off message was written after this file was generated._
