@@ -341,20 +341,24 @@ export function drawField(
     );
   }
 }
-export function drawScoreStrip(canvas, score, index) {
+// Note density over time. Bars before `progress` (0–1) are drawn brighter, so the
+// strip doubles as a progress bar that lines up exactly with the playhead.
+export function drawScoreStrip(canvas, score, index, progress = 0) {
   const ctx = canvas.getContext("2d"),
     w = canvas.width,
     h = canvas.height;
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = presets[index].color;
   const bins = Array(108).fill(0);
   for (const n of score.events) {
     const bin = Math.min(107, Math.floor((n.time / score.duration) * 108));
     bins[bin] += n.velocity * (0.7 + n.variant);
   }
   const max = Math.max(...bins, 1);
+  const color = presets[index].color;
   bins.forEach((value, i) => {
     const height = 2 + ((h - 3) * value) / max;
+    ctx.fillStyle = color;
+    ctx.globalAlpha = (i + 0.5) / bins.length <= progress ? 0.9 : 0.34;
     ctx.fillRect(
       (i * w) / bins.length,
       (h - height) / 2,
@@ -362,4 +366,5 @@ export function drawScoreStrip(canvas, score, index) {
       height,
     );
   });
+  ctx.globalAlpha = 1;
 }

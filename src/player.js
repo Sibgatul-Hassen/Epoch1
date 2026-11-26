@@ -33,6 +33,13 @@ export class Player {
     this.smoothed += 0.28 * (Math.min(1, rms * 8) - this.smoothed);
     return this.smoothed;
   }
+  // Delay between the audio clock and what reaches the speaker (larger on phones and
+  // Bluetooth). The visuals subtract it so they follow the sound the listener hears.
+  latency() {
+    if (!this.context) return 0;
+    const value = this.context.outputLatency || this.context.baseLatency || 0;
+    return Math.min(0.5, Math.max(0, value));
+  }
   setVolume(value) {
     this.level = clamp(value, 0, 1);
     if (this.master)

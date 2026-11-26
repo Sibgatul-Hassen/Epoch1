@@ -20,7 +20,7 @@ let studio = false,
   transaction = 0,
   changeTimer;
 let slide = 0,
-  pace = motion.matches ? 0 : 2000,
+  pace = 2000,
   moving = pace > 0,
   quoteNumber = 0;
 let galleryTimer,
@@ -106,8 +106,23 @@ function showScore(nextScore, nextSettings) {
     " / " +
     preset.key
   ).toUpperCase();
-  drawScoreStrip(byId("score-strip"), nextScore, nextSettings.index);
+  stripBin = -1;
+  paintProgress(Math.min(player.position(), nextScore.duration), nextScore, nextSettings);
   if (studio) drawAt(Math.min(player.position(), nextScore.duration), true);
+}
+// The playhead and the filled part of the strip are drawn from the same number as the
+// clock, so they line up on every browser (a range input's own thumb is positioned
+// differently by each mobile browser, so it is kept invisible and only used for input).
+let stripBin = -1;
+const scoreTrack = document.querySelector(".score-track");
+function paintProgress(time, sc = audibleScore, st = audibleSettings) {
+  const fraction = Math.min(1, Math.max(0, time / sc.duration));
+  scoreTrack.style.setProperty("--progress", fraction.toFixed(5));
+  const bin = Math.floor(fraction * 108);
+  if (bin !== stripBin) {
+    stripBin = bin;
+    drawScoreStrip(byId("score-strip"), sc, st.index, fraction);
+  }
 }
 function fieldFor(number) {
   if (!fields.has(number))
@@ -201,6 +216,7 @@ function drawAt(time, force = false) {
     byId("field-clock").textContent = displayTime;
   }
   byId("seek").value = time;
+  paintProgress(time);
   byId("seek").setAttribute(
     "aria-valuetext",
     clock(time) + " of " + clock(audibleScore.duration),
@@ -215,7 +231,8 @@ function animate(now) {
     now - lastFrame > (motion.matches ? 180 : 0)
   ) {
     lastFrame = now;
-    drawAt(player.position());
+    // Show what is audible: phones and Bluetooth output play later than the clock.
+    drawAt(Math.max(0, player.position() - player.latency()));
     byId("studio").style.setProperty(
       "--energy",
       motion.matches ? 0 : player.energy().toFixed(3),
@@ -462,15 +479,16 @@ byId("next-quote").onclick = () => {
   showQuote(quoteNumber + 1);
   resetRotation();
 };
+// Gallery and quotes keep rotating for as long as the landing page is open. They stop
+// only when the visitor leaves the page or the tab is hidden; the gallery can also be
+// set to "Still" in the manual. A manual change restarts the interval, so the next
+// automatic change never follows a tap immediately.
 function resetRotation() {
   clearInterval(galleryTimer);
   clearInterval(quoteTimer);
-  if (!moving || route.current !== "overview" || document.hidden || byId("manual").open)
-    return;
-  if (!byId("gallery").matches(":hover,:focus-within"))
-    galleryTimer = setInterval(() => setSlide(slide + 1), pace || 2000);
-  if (!document.querySelector(".quote-area").matches(":hover,:focus-within"))
-    quoteTimer = setInterval(() => showQuote(quoteNumber + 1), 4500);
+  if (route.current !== "overview" || document.hidden) return;
+  if (moving) galleryTimer = setInterval(() => setSlide(slide + 1), pace || 2000);
+  quoteTimer = setInterval(() => showQuote(quoteNumber + 1), 4500);
 }
 byId("pace").onchange = (event) => {
   pace = +event.target.value;
@@ -478,16 +496,8 @@ byId("pace").onchange = (event) => {
   resetRotation();
 };
 byId("pace").value = pace;
-for (const el of [byId("gallery"), document.querySelector(".quote-area")]) {
-  for (const type of ["mouseenter", "mouseleave", "focusin", "focusout"])
-    el.addEventListener(type, () => setTimeout(resetRotation, 0));
-}
 document.addEventListener("visibilitychange", resetRotation);
 motion.addEventListener("change", () => {
-  moving = !motion.matches;
-  pace = moving ? 2000 : 0;
-  byId("pace").value = pace;
-  resetRotation();
   if (studio) drawAt(player.position(), true);
 });
 document.addEventListener("keydown", (event) => {
