@@ -565,6 +565,52 @@ manual.addEventListener("keydown", (event) => {
   }
 });
 byId("close-help").onclick = closeManual;
+// ---------- Header navigation marker ----------
+// One marker slides under the active link. On the landing page it also follows the
+// scroll position: Overview at the top, Soundscapes once that section is in view.
+const navMarker = document.querySelector(".nav-marker");
+let navCurrent = "overview";
+function placeMarker(animate = true) {
+  const link = document.querySelector(`[data-nav="${navCurrent}"]`);
+  if (!link) return;
+  if (!animate) navMarker.style.transition = "none";
+  const width = 18;
+  navMarker.style.width = width + "px";
+  navMarker.style.transform = `translateX(${link.offsetLeft + link.offsetWidth / 2 - width / 2}px)`;
+  navMarker.classList.add("ready");
+  if (!animate) requestAnimationFrame(() => (navMarker.style.transition = ""));
+}
+function setNav(target, animate = true) {
+  navCurrent = target;
+  all("[data-nav]").forEach((a) => {
+    if (a.dataset.nav === target) a.setAttribute("aria-current", "page");
+    else a.removeAttribute("aria-current");
+  });
+  placeMarker(animate);
+}
+new ResizeObserver(() => placeMarker(false)).observe(document.querySelector(".mast nav"));
+document.fonts?.ready.then(() => placeMarker(false));
+// Keep anchored sections clear of the fixed header.
+const header = document.querySelector(".mast");
+new ResizeObserver(() =>
+  document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px"),
+).observe(header);
+// Scroll spy for the landing page.
+let spyQueued = false;
+window.addEventListener(
+  "scroll",
+  () => {
+    if (spyQueued || route.current !== "overview") return;
+    spyQueued = true;
+    requestAnimationFrame(() => {
+      spyQueued = false;
+      const top = byId("soundscapes").getBoundingClientRect().top;
+      const target = top < header.offsetHeight + window.innerHeight * 0.35 ? "soundscapes" : "overview";
+      if (target !== navCurrent) setNav(target);
+    });
+  },
+  { passive: true },
+);
 function route(initial = false) {
   const hash = location.hash.slice(1),
     [dest, preset] = hash.split("/");
@@ -581,10 +627,7 @@ function route(initial = false) {
     byId("landing").hidden = page !== "overview";
     const navTarget =
       page === "overview" && dest === "soundscapes" ? "soundscapes" : page;
-    all("[data-nav]").forEach((a) => {
-      if (a.dataset.nav === navTarget) a.setAttribute("aria-current", "page");
-      else a.removeAttribute("aria-current");
-    });
+    setNav(navTarget, !initial);
     if (studio) {
       if (/^[012]$/.test(preset || "")) settings = settingsFor(+preset);
       score = compose(settings);
