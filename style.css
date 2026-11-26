@@ -1243,22 +1243,45 @@ dialog.leaving::backdrop {
   position: relative;
   isolation: isolate;
 }
-.hero:before {
+/* Hub's Quest motif: concentric dotted ripples (cyan and soft pink rings) that
+   breathe slowly behind the hero, echoing sound waves spreading from a source. */
+.hero:before,
+.hero:after {
   content: "";
   position: absolute;
   z-index: -1;
   pointer-events: none;
-  inset: 0 28% 0 -3%;
+  inset: -12% 22% -8% -18%;
+  -webkit-mask-image:
+    radial-gradient(circle, #000 1.1px, transparent 1.6px),
+    radial-gradient(ellipse at 40% 50%, #000 0 30%, transparent 68%);
+  mask-image:
+    radial-gradient(circle, #000 1.1px, transparent 1.6px),
+    radial-gradient(ellipse at 40% 50%, #000 0 30%, transparent 68%);
+  -webkit-mask-size: 7px 7px, 100% 100%;
+  mask-size: 7px 7px, 100% 100%;
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+  animation: ripple 22s ease-in-out infinite;
+}
+.hero:before {
   background: repeating-radial-gradient(
-    ellipse at 42% 48%,
-    transparent 0 34px,
-    #8bdce85e 35px 36px,
-    transparent 37px 51px
+    ellipse 100% 62% at 40% 50%,
+    transparent 0 30px,
+    #8be4e7 31px 34px,
+    transparent 35px 64px
   );
-  mask-image: radial-gradient(circle, #000 1px, transparent 1.5px);
-  mask-size: 6px 6px;
-  opacity: 0.12;
-  animation: ripple 20s ease-in-out infinite;
+  opacity: 0.34;
+}
+.hero:after {
+  background: repeating-radial-gradient(
+    ellipse 100% 62% at 40% 50%,
+    transparent 0 46px,
+    #f2a5dd 47px 50px,
+    transparent 51px 64px
+  );
+  opacity: 0.3;
+  animation-delay: -11s;
 }
 .hero-copy > * {
   animation: appear 0.7s both;
@@ -1338,8 +1361,7 @@ input[type="range"]:focus-visible::-webkit-slider-thumb {
 }
 @keyframes ripple {
   50% {
-    transform: scale(1.09);
-    opacity: 0.2;
+    transform: scale(1.08);
   }
 }
 @media (max-width: 400px) {
