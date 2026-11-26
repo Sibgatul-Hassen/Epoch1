@@ -1637,6 +1637,59 @@ The phone layout is clean at 320, 360 and 414 px, and the gallery, thumbnails an
 
 - 🔧 **PowerShell**: Stop local test server
 
+The phone version now matches the web, and the desktop rendering is unchanged. I tested this in a phone emulator, so please confirm the glow on your actual phone. It's pushed in `3d18066` and will be live within a minute or two.
+
+**Why the phone looked different:** your phone almost certainly has its system "reduce motion" setting turned on (on Android it's often called "Remove animations", and some battery savers enable it). The site treated that setting as "switch off every animation and transition". On your phone that meant:
+- no logo glow
+- no fades or crossfades
+- no sliding nav marker
+- no tree growth on the Recursion page
+- choppy Studio visuals (about 5 frames per second) and no glow that pulses with the music
+
+It probably also explains why the gallery rotation stopped on your phone earlier.
+
+**What changed:**
+- **"Reduce motion" now only removes movement:** the slowly drifting ripple behind the headline, the hover lift and zoom effects, and smooth scrolling. Glows, fades, crossfades, the sliding marker, the tree growth and the full-speed Studio animation are identical to the web. In the emulator with reduce motion on, the phone now shows the same logo glow, marker slide, crossfades and fades as the desktop.
+- **Restored features I'd hidden on phones:**
+  - the gallery thumbnails, now a row of four along the bottom of the picture (77×48 px, easy to tap)
+  - a "Tap to open" hint that's always visible, since phones have no hover to reveal "Click to open"
+  - the small open icon on each soundscape card
+- **Manual:** updated to describe this behaviour.
+
+The phone still uses a narrower, stacked layout because the screen is smaller, but it has the same features and effects. Phone layouts at 320, 360 and 414 px have no overflow, no small tap targets and no errors. The AI log is updated in `910b1c0`.
+
+## 👤 Owner prompt · 2026-11-26 13:59:48 UTC
+
+_Attached: image_
+
+if i switch among these on the mobile it takes time to compose the next one while playing one  which is a bad user experience fix it and we are good to go
+
+## 🤖 Claude Code · 2026-11-26 14:00:18 UTC
+
+When you switch mood mid-song, the app tries to keep your place, for example 55 s into the new mood. The quick 16-second opening can't help there, so it waits for the whole new piece to render. That takes 2–3 s on a laptop and much longer on a phone.
+
+A new mood is really a new piece, so the fix is for mood switches (and new seeds, including "Surprise me") to **start the new piece from its beginning with a smooth 1.5 s crossfade**. The openings of all three moods are already pre-rendered in the background, so the switch is close to instant. Slider tweaks still keep your place. First I'll measure the current delay with the CPU slowed 4× to simulate a phone:
+
+- 🔧 **Bash**: Measure mood-switch delay on throttled CPU (before fix)
+
+That reproduces it: once you're past the first ~13 seconds, a mood switch takes **4.8–5.4 s** on a phone-speed CPU. Now the fix:
+
+- 🔧 **Bash**: Locate begin/changed and mood handlers
+
+- 🔧 **Bash**: Restart new pieces from the beginning on switch
+
+Now the same phone-speed test after the fix:
+
+- 🔧 **Bash**: Measure mood-switch delay after fix
+
+- 🔧 **Bash**: Verify continuation past opening and regression
+
+Even on the slow CPU, playback runs straight past the opening (0:21 after 21 s, still playing), and the full regression passes. Committing and pushing:
+
+- 🔧 **Bash**: Commit, push, update logs
+
+- 🔧 **PowerShell**: Stop local test server
+
 ---
 
 _End of export. The session's final hand-off message was written after this file was generated._
