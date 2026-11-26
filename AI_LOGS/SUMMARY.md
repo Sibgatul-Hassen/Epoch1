@@ -1,6 +1,6 @@
 # AI usage summary
 
-Two AI agents helped with this project: **Codex** (builder) and **Claude Code** (reviewer, then builder after Codex reached its usage limit). Each entry below describes one prompt in plain words, what the agent understood, and which repository files it created or edited. The complete prompt-and-response transcripts are in this folder (see [README.md](README.md)).
+Two AI agents helped with this project: **Codex** (builder) and **Claude Code** (reviewer, then builder after Codex reached its usage limit). Each entry below describes one prompt in plain words, what the agent understood, and which repository files it created or edited.
 
 ---
 
@@ -104,5 +104,5 @@ Two AI agents helped with this project: **Codex** (builder) and **Claude Code** 
 **Files edited:** `AI_LOGS/` files. **Files removed:** `.nojekyll`.
 
 ### 20. This summary
-**Prompt (in short):** Write a simple summary of my prompts, what was understood and which files changed, keeping the full logs.
-**Files created:** `AI_LOGS/SUMMARY.md`. **Files edited:** `AI_LOGS/README.md`.
+**Prompt (in short):** Write a simple summary of my prompts, what was understood and which files changed, and keep only this summary in the folder.
+**Files created:** `AI_LOGS/SUMMARY.md`. **Files removed:** the earlier files in `AI_LOGS/`.
