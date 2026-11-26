@@ -54,6 +54,7 @@ const quotes = [
     "Clouds are not spheres, mountains are not cones, coastlines are not circles…",
     "Benoît Mandelbrot · The Fractal Geometry of Nature",
   ],
+  ["To iterate is human, to recurse divine.", "L. Peter Deutsch · computer scientist"],
 ];
 
 function labelButton(button, icon, label) {
@@ -469,10 +470,7 @@ function resetRotation() {
   if (!byId("gallery").matches(":hover,:focus-within"))
     galleryTimer = setInterval(() => setSlide(slide + 1), pace || 2000);
   if (!document.querySelector(".quote-area").matches(":hover,:focus-within"))
-    quoteTimer = setInterval(
-      () => showQuote(quoteNumber + 1),
-      Math.max(6000, pace),
-    );
+    quoteTimer = setInterval(() => showQuote(quoteNumber + 1), 4500);
 }
 byId("pace").onchange = (event) => {
   pace = +event.target.value;

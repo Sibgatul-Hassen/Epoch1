@@ -147,19 +147,35 @@ function drawStack() {
           : "call grow(depth " + stackNodes[e.id].depth + ")"
         : "return from depth " + stackNodes[e.id].depth;
 }
+// A play/pause button: swaps its icon and label.
+function setToggle(id, playing, playLabel, pauseLabel) {
+  const button = byId(id);
+  button.querySelector("use").setAttribute("href", playing ? "#i-pause" : "#i-play");
+  button.querySelector("span").textContent = playing ? pauseLabel : playLabel;
+  button.setAttribute("aria-pressed", playing);
+}
+let stackTimer = null;
 function stackStep() {
   if (stackIndex >= stackEvents.length - 1) stackIndex = -1;
   stackIndex++;
   drawStack();
 }
-function runStack() {
-  clearTimers();
+function pauseStack() {
+  clearTimeout(stackTimer);
+  stackTimer = null;
+  stackRunning = false;
+  const finished = stackIndex >= stackEvents.length - 1;
+  setToggle("stack-play", false, finished || stackIndex < 0 ? "Run it" : "Resume", "Pause");
+}
+// Run it ⇄ Pause. Resuming continues from the current step; after the last step it restarts.
+function toggleStack() {
+  if (stackRunning) return pauseStack();
   stackRunning = true;
-  stackIndex = -1;
+  setToggle("stack-play", true, "Run it", "Pause");
   const tick = () => {
     stackStep();
-    if (stackIndex < stackEvents.length - 1 && stackRunning) later(tick, 650);
-    else stackRunning = false;
+    if (stackIndex < stackEvents.length - 1) stackTimer = setTimeout(tick, 650);
+    else pauseStack();
   };
   tick();
 }
@@ -201,14 +217,56 @@ function drawSplit(active = new Set()) {
   for (const n of notes)
     el("circle", { cx: x(n.point), cy: y(n.level), r: Math.max(4, 10 - n.level * 1.6), class: "note lvl" + n.level + (active.has(n.id) ? " on" : "") }, svg);
 }
+// Hear it ⇄ Pause. Notes are scheduled on the audio clock, and the highlights follow
+// that same clock, so suspending the context pauses sound and picture together.
+const span = 4.2;
+let splitState = "idle", // idle | playing | paused
+  splitStart = 0,
+  splitFrame = 0;
+function splitLoop() {
+  if (splitState !== "playing" || !audio) return;
+  const t = audio.currentTime - splitStart;
+  const lit = new Set(
+    splitNotes(splitDepth)
+      .filter((n) => n.point * span <= t)
+      .map((n) => n.id),
+  );
+  drawSplit(lit);
+  if (t > span + 1.4) return stopSplit();
+  splitFrame = requestAnimationFrame(splitLoop);
+}
+function stopSplit() {
+  cancelAnimationFrame(splitFrame);
+  splitState = "idle";
+  if (audio) audio.close();
+  audio = null;
+  drawSplit();
+  setToggle("split-play", false, "Hear it", "Pause");
+}
+function toggleSplit() {
+  if (splitState === "playing") {
+    splitState = "paused";
+    audio.suspend();
+    cancelAnimationFrame(splitFrame);
+    setToggle("split-play", false, "Resume", "Pause");
+    return;
+  }
+  if (splitState === "paused") {
+    splitState = "playing";
+    audio.resume().then(splitLoop);
+    setToggle("split-play", true, "Hear it", "Pause");
+    return;
+  }
+  playSplit();
+}
 function playSplit() {
-  clearTimers();
   const notes = splitNotes(splitDepth).sort((a, b) => a.point - b.point);
-  if (!audio) audio = new AudioContext();
+  audio = new AudioContext();
   audio.resume();
-  const span = 4.2,
-    start = audio.currentTime + 0.08;
-  const lit = new Set();
+  const start = audio.currentTime + 0.08;
+  splitStart = start;
+  splitState = "playing";
+  setToggle("split-play", true, "Hear it", "Pause");
   for (const n of notes) {
     const t = start + n.point * span;
     const osc = audio.createOscillator(),
@@ -224,12 +282,8 @@ function playSplit() {
     osc.connect(gain).connect(pan).connect(audio.destination);
     osc.start(t);
     osc.stop(t + 1.7);
-    later(() => {
-      lit.add(n.id);
-      drawSplit(lit);
-    }, (t - audio.currentTime) * 1000);
   }
-  later(() => drawSplit(), (span + 1.4) * 1000);
+  splitFrame = requestAnimationFrame(splitLoop);
 }
 
 // ---------- page lifecycle ----------
@@ -237,26 +291,27 @@ let ready = false;
 function setup() {
   growSelect = stepper(byId("grow-steps"), [0, 1, 2, 3, 4, 5, 6], 0, setGrow);
   splitSelect = stepper(byId("split-steps"), [1, 2, 3, 4], splitDepth, (d) => {
-    clearTimers();
+    stopSplit();
     splitDepth = d;
     splitSelect(d);
     drawSplit();
   });
-  byId("stack-play").onclick = runStack;
+  byId("stack-play").onclick = toggleStack;
   byId("stack-next").onclick = () => {
-    clearTimers();
-    stackRunning = false;
+    if (stackRunning) pauseStack();
     stackStep();
+    pauseStack();
   };
-  byId("split-play").onclick = playSplit;
+  byId("split-play").onclick = toggleSplit;
   ready = true;
 }
 export function enter() {
   if (!ready) setup();
   clearTimers();
   stackIndex = -1;
+  pauseStack();
   drawStack();
-  drawSplit();
+  stopSplit();
   if (motion.matches) return setGrow(4);
   // Grow the tree on arrival, one level at a time.
   setGrow(0);
@@ -264,7 +319,6 @@ export function enter() {
 }
 export function leave() {
   clearTimers();
-  stackRunning = false;
-  if (audio) audio.close();
-  audio = null;
+  pauseStack();
+  stopSplit();
 }
