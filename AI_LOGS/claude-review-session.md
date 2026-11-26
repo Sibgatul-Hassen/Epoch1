@@ -1514,6 +1514,66 @@ At its peak the logo now has a clearly visible cyan glow with a hint of pink, an
 
 - 🔧 **PowerShell**: Stop leftover local test server
 
+The logo's glow is now brighter. The "blink" was the logo's slow breathing glow, which only reached a faint 4 px shadow at 23% opacity. At its peak it now swells into a clearly visible cyan glow with a soft pink halo, and the tree brightens slightly (about 18%), then fades back on the same 7-second cycle. It's still turned off for people who've enabled reduced motion in their system settings.
+
+I compared screenshots of the logo at rest and at the peak to confirm the difference is visible. The change is pushed in `faea83a` and the AI log is updated in `8ea8814`, so it will appear on the live site within a minute or two.
+
+## 👤 Owner prompt · 2026-11-26 13:39:12 UTC
+
+the backgroung light of the logo should spread a little bit more.
+
+the header should stay fixed when the page scrolls and the page marker should also move with smooth transition based on which page we are for both mobile and web
+
+## 🤖 Claude Code · 2026-11-26 13:39:33 UTC
+
+Three changes: a wider logo glow, a header that stays fixed while scrolling, and one page marker that slides smoothly between nav links. I'll check the current header CSS first:
+
+- 🔧 **Bash**: Find header, nav and scroll CSS/JS
+
+- 🔧 **Bash**: Read header and nav CSS
+
+The header has no overflow clipping above it, so a sticky header will work. I'll add the sliding marker to the markup first:
+
+- 🔧 **Edit**: d:\Epoch1\index.html
+
+- 🔧 **Edit**: d:\Epoch1\src\app.js
+
+- 🔧 **Edit**: d:\Epoch1\src\app.js
+
+- 🔧 **Bash**: Skip marker animation on first load
+
+Now the CSS: sticky header with a frosted background, the sliding marker in place of the per-link underline, anchor offsets, and the wider logo glow:
+
+- 🔧 **Bash**: Append sticky header, marker and glow CSS
+
+A later `@keyframes` rule with the same name overrides the earlier one, but two definitions would confuse anyone reading the CSS. I'll remove the old one:
+
+- 🔧 **Bash**: Remove duplicate breathe keyframes
+
+- 🔧 **Bash**: Locate both breathe keyframes
+
+The earlier keyframe isn't the version I committed last time. It now reads `drop-shadow(0 0 4px #f2a5dd59)`, so the file was changed outside this session. I'll check what changed before touching it:
+
+- 🔧 **Bash**: Inspect uncommitted changes in style.css
+
+- 🔧 **Bash**: Single pink spread glow keyframe
+
+- 🔧 **Bash**: Test fixed header, sliding marker and glow
+
+- 🔧 **Read**: ~\AppData\Local\Temp\claude\bed141e408e17ecd\42fba2b1-2320-451a-8dc5-4313e3359b9d\scratchpad\nav-desk-scrolled.jpg
+
+- 🔧 **Read**: ~\AppData\Local\Temp\claude\bed141e408e17ecd\42fba2b1-2320-451a-8dc5-4313e3359b9d\scratchpad\nav-mob-studio-scrolled.jpg
+
+- 🔧 **Read**: ~\AppData\Local\Temp\claude\bed141e408e17ecd\42fba2b1-2320-451a-8dc5-4313e3359b9d\scratchpad\nav-desk-logo.png
+
+- 🔧 **Bash**: Regression test before commit
+
+Everything passes (the single non-matching line is just the "ERRORS: none" summary). Committing and pushing:
+
+- 🔧 **Bash**: Commit, push, update logs
+
+- 🔧 **PowerShell**: Stop local test server
+
 ---
 
 _End of export. The session's final hand-off message was written after this file was generated._
