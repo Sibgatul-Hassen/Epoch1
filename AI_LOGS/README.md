@@ -16,3 +16,7 @@ Sibgatul Hassen is the author. These records disclose AI assistance for the Epoc
 3. When Codex reached its usage limit, the owner asked Claude Code to finish the project. Claude Code ran the engine and browser tests, made the Hub's Quest ripple visible, and exported these logs.
 
 The transcripts preserve the user prompts and visible assistant responses in order. The round-two attached critique is included beside its prompt. Transcript timestamps use UTC. No AI tool is listed as a git co-author; all commits are by the owner.
+
+## Redactions
+
+The transcripts are otherwise verbatim. Before publishing, these private details were replaced: a private WhatsApp group invite link from the organizers' email (now `[WhatsApp group invite link removed]`), the names of other email recipients (now `[other participants]`), local file paths on the author's computer (`C:\Users\…` is now `~`), and the author's private email addresses.
