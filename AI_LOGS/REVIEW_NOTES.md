@@ -231,3 +231,12 @@ Codex reached its usage limit, and the owner asked Claude Code to finish the pro
 - [x] **42b.** _Claude Code:_ the hero ripple was at 12% opacity and effectively invisible. It's now two dotted ring layers (cyan + soft pink, 7 px dot mask, radial fade so it never sits behind the gallery) breathing on a 22 s cycle, and it's disabled by the reduced-motion rule. Commit `eb98b11`.
 - [x] **66. Final log refresh.** _Claude Code:_ appended Codex's last message (11:56:47Z) to `codex-session.md`, exported this Claude Code session to `claude-review-session.md`, and updated `AI_LOGS/README.md` and the README credits.
 - [x] **16.** Covered by #66, and `AI_LOGS/README.md` lists every log file.
+
+---
+
+## Round 20 (19:30 local): owner feedback, implemented by Claude Code
+
+- [x] **71. Slow start (4–5 s).** The worker now renders the 16 s opening first (about 0.3 s), then the full piece. Loudness gain is measured over the same opening window in both, so they're sample-identical (verified: max difference 0) and playback swaps without a seam. Preset and preview openings are pre-rendered in the background. Measured on the live site: **0.2 s** for presets and previews, **0.9 s** for brand-new settings, and playback continues past the opening.
+- [x] **72. Gallery.** Removed "Play preview" and the gallery pause button. Slides rotate every 2 s (pausing on hover or focus; still under reduced motion; pace selectable in the manual). Clicking the main picture or any thumbnail opens that soundscape (mood + depth) in the studio.
+- [x] **73. Recursion page (`#learn`).** Visual and low on text: (1) a tree drawn by a recursive function, grown level 0–6 with a live call count; (2) base case vs recursive step cards with code; (3) an animated call tree with a live call stack (Run / One step); (4) "split time, place notes" at depth 1–4, which you can hear. It ends with a mapping strip and a link to the studio.
+- [x] **74. Card numbers.** Each soundscape card shows a 01/02/03 badge and four figures computed from the real score: levels, notes, BPM and length.
