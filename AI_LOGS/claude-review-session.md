@@ -1574,6 +1574,69 @@ Everything passes (the single non-matching line is just the "ERRORS: none" summa
 
 - 🔧 **PowerShell**: Stop local test server
 
+All three changes are pushed in `576fe6a`, and the live site will update within a minute or two. The AI log is updated in `3ef58fe`.
+
+**Logo glow:** since my last commit, the glow had been hand-edited to a soft pink with no brightness lift. I kept that look and made it spread much further, in three soft layers.
+
+**Fixed header:** the header now stays pinned to the top on every page, on desktop and phone. It has a slightly see-through, frosted background, so content scrolls underneath it. Links that jump to a section (such as Soundscapes) land just below the header instead of being covered by it.
+
+**Page marker:** the separate underline on each link is replaced by one marker that slides smoothly (0.5 s) to whichever page you open. On the landing page it also follows your scrolling: it moves to "Soundscapes" when that section comes into view and back to "Overview" at the top.
+
+**Tested in headless Chrome at desktop (1280 px) and phone (390 px) sizes:**
+- the header stays at the top after scrolling 2000 px, on the landing page and in the Studio
+- the marker sits centred under the active link, within half a pixel, and I caught it mid-slide
+- the regression run still passes: about 0.1 s to start playing, gallery click-through, WAV export, the Recursion page, phone layouts with no overflow, and no errors
+
+## 👤 Owner prompt · 2026-11-26 13:50:02 UTC
+
+okay the web version is working perfectly dont make any changes to it and make the mobile version same as the web version  because i found some descrepencies like the background light of logo
+
+## 🤖 Claude Code · 2026-11-26 13:50:28 UTC
+
+I'll leave the desktop layout exactly as it is. First I need to find where the phone version actually differs, starting with the logo glow. I'll capture it at the peak of its cycle on desktop and in a phone emulator, side by side:
+
+- 🔧 **Bash**: Capture logo glow desktop vs phone
+
+- 🔧 **Read**: ~\AppData\Local\Temp\claude\bed141e408e17ecd\42fba2b1-2320-451a-8dc5-4313e3359b9d\scratchpad\lg-desk.png
+
+- 🔧 **Read**: ~\AppData\Local\Temp\claude\bed141e408e17ecd\42fba2b1-2320-451a-8dc5-4313e3359b9d\scratchpad\lg-mob.png
+
+- 🔧 **Bash**: List reduced-motion handling in CSS and JS
+
+- 🔧 **Bash**: Make JS behave identically regardless of reduced-motion
+
+Now the CSS. The reduce-motion rule will target only movement:
+
+- 🔧 **Bash**: Replace global reduced-motion kill switch
+
+Now the gallery thumbnails, the "Tap to open" hint and the card icon on phones. First the hint markup (desktop still shows "Click to open"):
+
+- 🔧 **Edit**: d:\Epoch1\index.html
+
+- 🔧 **Bash**: Append phone gallery parity CSS
+
+Next, the manual text, which still describes the old pause-on-hover and reduce-motion behaviour:
+
+- 🔧 **Edit**: d:\Epoch1\index.html
+
+- 🔧 **Bash**: Compare desktop vs phone vs phone+reduced motion
+
+- 🔧 **Read**: ~\AppData\Local\Temp\claude\bed141e408e17ecd\42fba2b1-2320-451a-8dc5-4313e3359b9d\scratchpad\par-mobrm.jpg
+
+- 🔧 **Read**: ~\AppData\Local\Temp\claude\bed141e408e17ecd\42fba2b1-2320-451a-8dc5-4313e3359b9d\scratchpad\par-desk.jpg
+
+Desktop is unchanged: the same layout, the 2×2 corner thumbnails, and the hover-only "Click to open" hint. One more phone layout audit with the new thumbnail row, then commit:
+
+- 🔧 **Bash**: Phone layout audit after parity changes
+
+- 🔧 **Read**: ~\AppData\Local\Temp\claude\bed141e408e17ecd\42fba2b1-2320-451a-8dc5-4313e3359b9d\scratchpad\mob7\320x640-overview.jpg
+
+The phone layout is clean at 320, 360 and 414 px, and the gallery, thumbnails and cards all have the same features as the web. Committing and pushing:
+
+- 🔧 **Bash**: Commit, push, update logs
+
+- 🔧 **PowerShell**: Stop local test server
+
 ---
 
 _End of export. The session's final hand-off message was written after this file was generated._
